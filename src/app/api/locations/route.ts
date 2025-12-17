@@ -69,20 +69,24 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
-    const location = {
-      id: (db.getLocations().length + 1).toString(),
-      governorate: body.governorate,
-      area: body.area,
-      created_at: new Date().toISOString()
-    };
+    const { governorate, area } = body;
 
-    // إضافة الموقع (في التطبيق الحقيقي سيتم حفظه في قاعدة البيانات)
-    db.getLocations().push(location);
+    if (!governorate || !area) {
+      return NextResponse.json(
+        { success: false, error: 'Governorate and area are required' },
+        { status: 400 }
+      );
+    }
+
+    const newLocation = db.createLocation({
+      governorate,
+      area
+    });
 
     return NextResponse.json({
       success: true,
-      data: location
+      data: newLocation,
+      message: 'Location created successfully'
     });
   } catch (error: any) {
     console.error('Error creating location:', error);

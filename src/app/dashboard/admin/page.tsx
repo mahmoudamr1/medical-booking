@@ -11,9 +11,24 @@ import { useAuth } from '@/lib/auth-context';
 function StatsCards() {
   const [stats, setStats] = useState({
     totalDoctors: 0,
+    activeDoctors: 0,
+    verifiedDoctors: 0,
     totalPatients: 0,
+    totalAppointments: 0,
     todayAppointments: 0,
-    totalSpecialties: 0
+    totalSpecialties: 0,
+    appointmentsByStatus: {
+      pending: 0,
+      confirmed: 0,
+      completed: 0,
+      cancelled: 0
+    },
+    doctorsByStatus: {
+      active: 0,
+      inactive: 0,
+      verified: 0,
+      unverified: 0
+    }
   });
   const [loading, setLoading] = useState(true);
 
@@ -61,6 +76,9 @@ function StatsCards() {
             <div>
               <p className="text-sm text-gray-600">إجمالي الأطباء</p>
               <p className="text-2xl font-bold text-gray-900">{stats.totalDoctors}</p>
+              <p className="text-xs text-green-600">
+                {stats.doctorsByStatus.verified} معتمد • {stats.doctorsByStatus.active} نشط
+              </p>
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <Users className="h-6 w-6 text-blue-600" />
@@ -75,6 +93,7 @@ function StatsCards() {
             <div>
               <p className="text-sm text-gray-600">المرضى المسجلين</p>
               <p className="text-2xl font-bold text-gray-900">{stats.totalPatients}</p>
+              <p className="text-xs text-gray-500">مستخدمين نشطين</p>
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <Users className="h-6 w-6 text-green-600" />
@@ -89,6 +108,9 @@ function StatsCards() {
             <div>
               <p className="text-sm text-gray-600">المواعيد اليوم</p>
               <p className="text-2xl font-bold text-gray-900">{stats.todayAppointments}</p>
+              <p className="text-xs text-blue-600">
+                {stats.appointmentsByStatus.confirmed} مؤكد • {stats.appointmentsByStatus.pending} في الانتظار
+              </p>
             </div>
             <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
               <Calendar className="h-6 w-6 text-yellow-600" />
@@ -103,6 +125,7 @@ function StatsCards() {
             <div>
               <p className="text-sm text-gray-600">التخصصات</p>
               <p className="text-2xl font-bold text-gray-900">{stats.totalSpecialties}</p>
+              <p className="text-xs text-purple-600">تخصصات طبية متنوعة</p>
             </div>
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
               <Settings className="h-6 w-6 text-purple-600" />
@@ -314,11 +337,19 @@ export default function AdminDashboard() {
                   <Users className="h-4 w-4 ml-2" />
                   عرض جميع الأطباء
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button 
+                  onClick={() => router.push('/dashboard/admin/doctors?status=unverified')}
+                  className="w-full justify-start" 
+                  variant="outline"
+                >
                   <Shield className="h-4 w-4 ml-2" />
                   الأطباء في انتظار الموافقة
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
+                <Button 
+                  onClick={() => router.push('/dashboard/admin/specialties')}
+                  className="w-full justify-start" 
+                  variant="outline"
+                >
                   <Settings className="h-4 w-4 ml-2" />
                   إدارة التخصصات
                 </Button>
@@ -326,10 +357,10 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          {/* Bookings Management */}
+          {/* System Management */}
           <Card className="bg-white rounded-lg shadow-sm">
             <CardContent className="p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">إدارة المواعيد</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">إدارة النظام</h3>
               <div className="space-y-3">
                 <Button 
                   onClick={() => router.push('/dashboard/admin/appointments')}
@@ -337,15 +368,23 @@ export default function AdminDashboard() {
                   variant="outline"
                 >
                   <Calendar className="h-4 w-4 ml-2" />
-                  جميع المواعيد
+                  إدارة المواعيد
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Calendar className="h-4 w-4 ml-2" />
-                  المواعيد المؤكدة
+                <Button 
+                  onClick={() => router.push('/dashboard/admin/locations')}
+                  className="w-full justify-start" 
+                  variant="outline"
+                >
+                  <Settings className="h-4 w-4 ml-2" />
+                  إدارة المواقع
                 </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <Calendar className="h-4 w-4 ml-2" />
-                  المواعيد الملغية
+                <Button 
+                  onClick={() => router.push('/dashboard/admin/specialties')}
+                  className="w-full justify-start" 
+                  variant="outline"
+                >
+                  <Settings className="h-4 w-4 ml-2" />
+                  إدارة التخصصات
                 </Button>
               </div>
             </CardContent>

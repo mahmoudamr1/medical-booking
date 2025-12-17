@@ -47,45 +47,75 @@ export default function AdminDoctorsPage() {
   }, [authLoading, isAuthenticated, user]);
 
   const loadDoctors = async () => {
+    // التأكد من أن المستخدم مصادق عليه قبل تحميل البيانات
+    if (!isAuthenticated || !user || user.role !== 'admin') {
+      console.log('User not authenticated or not admin, skipping load');
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/doctors');
+      // بناء URL مع الفلاتر
+      const params = new URLSearchParams();
+      
+      if (searchTerm && searchTerm.trim()) {
+        params.append('search', searchTerm.trim());
+      }
+      
+      if (filterStatus && filterStatus !== 'all') {
+        params.append('status', filterStatus);
+      }
+      
+      // إضافة pagination
+      params.append('page', '1');
+      params.append('limit', '100'); // جلب عدد كبير لعرض جميع النتائج
+      
+      const url = `/api/admin/doctors${params.toString() ? '?' + params.toString() : ''}`;
+      console.log('Loading doctors with URL:', url);
+      console.log('Current filters:', { searchTerm, filterStatus });
+      
+      const response = await fetch(url);
       const result = await response.json();
+      
+      console.log('API Response:', result);
+      console.log('Setting doctors to:', result.data);
       
       if (result.success && result.data) {
         setDoctors(result.data);
+        console.log('Doctors state updated, new length:', result.data.length);
+      } else {
+        console.error('API Error:', result);
+        setDoctors([]);
       }
     } catch (error) {
       console.error('Error loading doctors:', error);
+      setDoctors([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredDoctors = doctors.filter(doctor => {
-    const doctorName = doctor.doctorName || doctor.expand?.user?.name || '';
-    const matchesSearch = doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         doctor.expand?.specialty?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         doctor.expand?.location?.area?.toLowerCase().includes(searchTerm.toLowerCase());
+  // useEffect منفصل للفلاتر
+  useEffect(() => {
+    console.log('useEffect triggered with:', { searchTerm, filterStatus, isAuthenticated: !!isAuthenticated, userRole: user?.role });
     
-    let matchesFilter = true;
-    switch (filterStatus) {
-      case 'verified':
-        matchesFilter = doctor.is_verified;
-        break;
-      case 'unverified':
-        matchesFilter = !doctor.is_verified;
-        break;
-      case 'active':
-        matchesFilter = doctor.is_active;
-        break;
-      case 'inactive':
-        matchesFilter = !doctor.is_active;
-        break;
-    }
-    
-    return matchesSearch && matchesFilter;
-  });
+    const timeoutId = setTimeout(() => {
+      console.log('Calling loadDoctors after timeout');
+      loadDoctors();
+    }, searchTerm ? 300 : 0); // تأخير 300ms للبحث، فوري للفلاتر الأخرى
+
+    return () => {
+      console.log('Clearing timeout');
+      clearTimeout(timeoutId);
+    };
+  }, [searchTerm, filterStatus, isAuthenticated, user]);
+
+  // إزالة الفلتر المكرر - الفلتر يتم في الـ API
+  const filteredDoctors = doctors;
+  
+  console.log('Render - Current doctors:', doctors.length);
+  console.log('Render - Current search term:', searchTerm);
+  console.log('Render - Current filter status:', filterStatus);
 
   const getStatusBadge = (doctor: Doctor) => {
     if (!doctor.is_verified) {
@@ -249,7 +279,10 @@ export default function AdminDoctorsPage() {
                     type="text"
                     placeholder="البحث بالاسم، التخصص، أو المنطقة..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => {
+                      console.log('Search input changed to:', e.target.value);
+                      setSearchTerm(e.target.value);
+                    }}
                     className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -268,6 +301,20 @@ export default function AdminDoctorsPage() {
                   <option value="active">النشطون</option>
                   <option value="inactive">غير النشطين</option>
                 </select>
+                
+                {(searchTerm || filterStatus !== 'all') && (
+                  <Button
+                    onClick={() => {
+                      setSearchTerm('');
+                      setFilterStatus('all');
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    مسح الفلاتر
+                  </Button>
+                )}
               </div>
             </div>
           </CardContent>
@@ -341,9 +388,17 @@ export default function AdminDoctorsPage() {
         {/* Doctors List */}
         <Card className="bg-white rounded-lg shadow-sm">
           <CardContent className="p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">
-              قائمة الأطباء ({filteredDoctors.length})
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">
+                قائمة الأطباء ({filteredDoctors.length})
+              </h3>
+              {loading && (
+                <div className="flex items-center gap-2 text-blue-600">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  <span className="text-sm">جاري التحديث...</span>
+                </div>
+              )}
+            </div>
             
             {filteredDoctors.length === 0 ? (
               <div className="text-center py-12">

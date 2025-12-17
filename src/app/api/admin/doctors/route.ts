@@ -10,6 +10,8 @@ export async function GET(request: NextRequest) {
     const specialty = searchParams.get('specialty') || '';
     const status = searchParams.get('status') || '';
 
+    console.log('API Filters:', { search, specialty, status, page, limit });
+
     // جلب جميع الأطباء مع التفاصيل
     const allDoctors = db.getDoctors().map(doctor => {
       const user = db.getUserById(doctor.user_id);
@@ -53,34 +55,70 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    console.log('Total doctors before filtering:', allDoctors.length);
+
     let filteredDoctors = [...allDoctors];
 
     // تطبيق الفلاتر
-    if (search) {
-      filteredDoctors = filteredDoctors.filter(doctor =>
-        doctor.name.toLowerCase().includes(search.toLowerCase()) ||
-        doctor.email.toLowerCase().includes(search.toLowerCase()) ||
-        doctor.specialty.toLowerCase().includes(search.toLowerCase()) ||
-        doctor.bio.toLowerCase().includes(search.toLowerCase())
-      );
+    if (search && search.trim() !== '') {
+      const searchTerm = search.toLowerCase().trim();
+      console.log('Applying search filter:', searchTerm);
+      
+      filteredDoctors = filteredDoctors.filter(doctor => {
+        // البحث في الاسم
+        const nameMatch = doctor.name && doctor.name.toLowerCase().includes(searchTerm);
+        const doctorNameMatch = doctor.doctorName && doctor.doctorName.toLowerCase().includes(searchTerm);
+        
+        // البحث في البريد الإلكتروني
+        const emailMatch = doctor.email && doctor.email.toLowerCase().includes(searchTerm);
+        
+        // البحث في التخصص
+        const specialtyMatch = doctor.specialty && doctor.specialty.toLowerCase().includes(searchTerm);
+        
+        // البحث في الموقع
+        const locationMatch = doctor.location && doctor.location.toLowerCase().includes(searchTerm);
+        const governorateMatch = doctor.governorate && doctor.governorate.toLowerCase().includes(searchTerm);
+        
+        // البحث في الوصف
+        const bioMatch = doctor.bio && doctor.bio.toLowerCase().includes(searchTerm);
+        
+        // البحث في رقم الهاتف
+        const phoneMatch = doctor.phone && doctor.phone.includes(searchTerm);
+        
+        // البحث في رقم الترخيص
+        const licenseMatch = doctor.licenseNumber && doctor.licenseNumber.toLowerCase().includes(searchTerm);
+        
+        const matches = nameMatch || doctorNameMatch || emailMatch || specialtyMatch || 
+                       locationMatch || governorateMatch || bioMatch || phoneMatch || licenseMatch;
+        
+        return matches;
+      });
+      
+      console.log('After search filter:', filteredDoctors.length);
     }
 
-    if (specialty) {
+    if (specialty && specialty.trim() !== '') {
+      console.log('Applying specialty filter:', specialty);
       filteredDoctors = filteredDoctors.filter(doctor =>
-        doctor.specialty === specialty
+        doctor.specialty && doctor.specialty.toLowerCase().includes(specialty.toLowerCase())
       );
+      console.log('After specialty filter:', filteredDoctors.length);
     }
 
-    if (status) {
+    if (status && status.trim() !== '' && status !== 'all') {
+      console.log('Applying status filter:', status);
+      
       if (status === 'active') {
-        filteredDoctors = filteredDoctors.filter(doctor => doctor.isActive);
+        filteredDoctors = filteredDoctors.filter(doctor => doctor.isActive === true);
       } else if (status === 'inactive') {
-        filteredDoctors = filteredDoctors.filter(doctor => !doctor.isActive);
+        filteredDoctors = filteredDoctors.filter(doctor => doctor.isActive === false);
       } else if (status === 'verified') {
-        filteredDoctors = filteredDoctors.filter(doctor => doctor.isVerified);
+        filteredDoctors = filteredDoctors.filter(doctor => doctor.isVerified === true);
       } else if (status === 'unverified') {
-        filteredDoctors = filteredDoctors.filter(doctor => !doctor.isVerified);
+        filteredDoctors = filteredDoctors.filter(doctor => doctor.isVerified === false);
       }
+      
+      console.log('After status filter:', filteredDoctors.length);
     }
 
     // تطبيق الـ pagination
@@ -97,6 +135,20 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(filteredDoctors.length / limit),
         totalItems: filteredDoctors.length,
         itemsPerPage: limit
+      },
+      filters: {
+        search: search || '',
+        specialty: specialty || '',
+        status: status || ''
+      },
+      debug: {
+        totalDoctorsBeforeFilter: allDoctors.length,
+        totalDoctorsAfterFilter: filteredDoctors.length,
+        appliedFilters: {
+          hasSearch: !!search,
+          hasSpecialty: !!specialty,
+          hasStatus: !!status
+        }
       }
     });
   } catch (error: any) {

@@ -25,6 +25,8 @@ export interface Specialty {
   id: string;
   name: string;
   slug: string;
+  icon?: string; // Icon name from backend (e.g., 'heart', 'baby', 'eye')
+  color?: string; // Tailwind color classes (e.g., 'bg-red-100 text-red-600')
 }
 
 export interface Location {

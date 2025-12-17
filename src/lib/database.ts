@@ -258,10 +258,52 @@ class LocalDatabase {
   // Specialties methods
   getSpecialties(): Specialty[] { return this.specialties; }
   getSpecialtyById(id: string): Specialty | undefined { return this.specialties.find(s => s.id === id); }
+  createSpecialty(specialty: Omit<Specialty, 'id' | 'created_at'>): Specialty {
+    const newSpecialty: Specialty = {
+      ...specialty,
+      id: (this.specialties.length + 1).toString(),
+      created_at: new Date().toISOString()
+    };
+    this.specialties.push(newSpecialty);
+    return newSpecialty;
+  }
+  updateSpecialty(id: string, updates: Partial<Specialty>): Specialty | null {
+    const index = this.specialties.findIndex(s => s.id === id);
+    if (index === -1) return null;
+    this.specialties[index] = { ...this.specialties[index], ...updates };
+    return this.specialties[index];
+  }
+  deleteSpecialty(id: string): boolean {
+    const index = this.specialties.findIndex(s => s.id === id);
+    if (index === -1) return false;
+    this.specialties.splice(index, 1);
+    return true;
+  }
 
   // Locations methods
   getLocations(): Location[] { return this.locations; }
   getLocationById(id: string): Location | undefined { return this.locations.find(l => l.id === id); }
+  createLocation(location: Omit<Location, 'id' | 'created_at'>): Location {
+    const newLocation: Location = {
+      ...location,
+      id: (this.locations.length + 1).toString(),
+      created_at: new Date().toISOString()
+    };
+    this.locations.push(newLocation);
+    return newLocation;
+  }
+  updateLocation(id: string, updates: Partial<Location>): Location | null {
+    const index = this.locations.findIndex(l => l.id === id);
+    if (index === -1) return null;
+    this.locations[index] = { ...this.locations[index], ...updates };
+    return this.locations[index];
+  }
+  deleteLocation(id: string): boolean {
+    const index = this.locations.findIndex(l => l.id === id);
+    if (index === -1) return false;
+    this.locations.splice(index, 1);
+    return true;
+  }
 
   // Appointments methods
   getAppointments(): Appointment[] { return this.appointments; }
@@ -344,14 +386,46 @@ class LocalDatabase {
 
       if (!doctor.is_active || !doctor.is_verified) return false;
 
-      if (filters.specialty && specialty?.name !== filters.specialty) return false;
-      if (filters.location && location?.governorate !== filters.location) return false;
-      if (filters.searchTerm) {
-        const searchLower = filters.searchTerm.toLowerCase();
-        const matchesName = user?.name.toLowerCase().includes(searchLower);
-        const matchesBio = doctor.bio.toLowerCase().includes(searchLower);
-        const matchesSpecialty = specialty?.name.toLowerCase().includes(searchLower);
-        if (!matchesName && !matchesBio && !matchesSpecialty) return false;
+      // فلتر التخصص
+      if (filters.specialty && filters.specialty.trim() !== '') {
+        if (specialty?.name !== filters.specialty) return false;
+      }
+
+      // فلتر الموقع
+      if (filters.location && filters.location.trim() !== '') {
+        if (location?.governorate !== filters.location) return false;
+      }
+
+      // فلتر البحث النصي
+      if (filters.searchTerm && filters.searchTerm.trim() !== '') {
+        const searchLower = filters.searchTerm.toLowerCase().trim();
+        
+        // البحث في اسم الطبيب
+        const matchesName = user?.name && user.name.toLowerCase().includes(searchLower);
+        
+        // البحث في الوصف
+        const matchesBio = doctor.bio && doctor.bio.toLowerCase().includes(searchLower);
+        
+        // البحث في التخصص
+        const matchesSpecialty = specialty?.name && specialty.name.toLowerCase().includes(searchLower);
+        
+        // البحث في الموقع
+        const matchesLocation = location?.governorate && location.governorate.toLowerCase().includes(searchLower);
+        const matchesArea = location?.area && location.area.toLowerCase().includes(searchLower);
+        
+        // البحث في البريد الإلكتروني
+        const matchesEmail = user?.email && user.email.toLowerCase().includes(searchLower);
+        
+        // البحث في رقم الهاتف
+        const matchesPhone = user?.phone && user.phone.includes(searchLower);
+        
+        // البحث في رقم الترخيص
+        const matchesLicense = doctor.license_number && doctor.license_number.toLowerCase().includes(searchLower);
+        
+        if (!matchesName && !matchesBio && !matchesSpecialty && !matchesLocation && 
+            !matchesArea && !matchesEmail && !matchesPhone && !matchesLicense) {
+          return false;
+        }
       }
 
       return true;

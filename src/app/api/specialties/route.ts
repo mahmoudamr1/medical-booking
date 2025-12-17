@@ -49,21 +49,25 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
-    const specialty = {
-      id: (db.getSpecialties().length + 1).toString(),
-      name: body.name,
-      description: body.description || '',
-      icon: body.icon || 'medical',
-      created_at: new Date().toISOString()
-    };
+    const { name, description, icon = 'medical' } = body;
 
-    // إضافة التخصص (في التطبيق الحقيقي سيتم حفظه في قاعدة البيانات)
-    db.getSpecialties().push(specialty);
+    if (!name || !description) {
+      return NextResponse.json(
+        { success: false, error: 'Name and description are required' },
+        { status: 400 }
+      );
+    }
+
+    const newSpecialty = db.createSpecialty({
+      name,
+      description,
+      icon
+    });
 
     return NextResponse.json({
       success: true,
-      data: specialty
+      data: newSpecialty,
+      message: 'Specialty created successfully'
     });
   } catch (error: any) {
     console.error('Error creating specialty:', error);

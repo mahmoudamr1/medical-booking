@@ -255,7 +255,7 @@ export default function DoctorPatientsPage() {
                 <div>
                   <p className="text-sm text-gray-600">متوسط الزيارات</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {Math.round(patients.reduce((sum, p) => sum + p.totalVisits, 0) / patients.length)}
+                    {patients.length > 0 ? Math.round(patients.reduce((sum, p) => sum + p.totalVisits, 0) / patients.length) : 0}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">

@@ -7,17 +7,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Search, MapPin, Star, Phone, Calendar, Users, Shield, Heart, Brain, Eye, Stethoscope, Baby, Bone, Clock, Award } from 'lucide-react';
 import MainLayout from '@/components/layout/MainLayout';
-import { doctorsAPI, Doctor } from '@/lib/pocketbase';
+import { doctorsAPI, dataAPI, Doctor } from '@/lib/pocketbase';
 
-// بيانات التخصصات
-const specialties = [
-  { name: 'طب القلب', icon: Heart, color: 'bg-red-100 text-red-600' },
-  { name: 'طب الأطفال', icon: Baby, color: 'bg-pink-100 text-pink-600' },
-  { name: 'طب العيون', icon: Eye, color: 'bg-blue-100 text-blue-600' },
-  { name: 'طب الأعصاب', icon: Brain, color: 'bg-purple-100 text-purple-600' },
-  { name: 'العظام', icon: Bone, color: 'bg-orange-100 text-orange-600' },
-  { name: 'الباطنة', icon: Stethoscope, color: 'bg-green-100 text-green-600' }
-];
+// Dynamic icon mapping based on icon name from backend
+const getIconComponent = (iconName?: string) => {
+  const icons: Record<string, any> = {
+    'heart': Heart,
+    'baby': Baby,
+    'eye': Eye,
+    'brain': Brain,
+    'bone': Bone,
+    'stethoscope': Stethoscope,
+  };
+  return icons[iconName?.toLowerCase() || ''] || Stethoscope;
+};
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,11 +31,21 @@ export default function HomePage() {
     queryKey: ['featuredDoctors'],
     queryFn: async () => {
       const result = await doctorsAPI.searchDoctors({ limit: 3 });
-      return result.success ? result.data.items.slice(0, 3) : [];
+      return result.success && result.data ? result.data.items.slice(0, 3) : [];
+    }
+  });
+
+  // جلب التخصصات من الباك إند
+  const { data: specialtiesData, isLoading: specialtiesLoading } = useQuery({
+    queryKey: ['specialties'],
+    queryFn: async () => {
+      const result = await dataAPI.getSpecialties();
+      return result.success ? result.data : [];
     }
   });
 
   const featuredDoctors = doctorsData || [];
+  const specialties = specialtiesData || [];
 
   return (
     <MainLayout>
@@ -251,25 +264,42 @@ export default function HomePage() {
             <p className="text-gray-600">اختر التخصص المناسب لحالتك الصحية</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {specialties.map((specialty, index) => {
-              const IconComponent = specialty.icon;
-              return (
-                <Link 
-                  key={index}
-                  href={`/search?specialty=${encodeURIComponent(specialty.name)}`}
-                  className="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-lg transition-all duration-300 group"
-                >
-                  <div className={`w-16 h-16 ${specialty.color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
-                    <IconComponent className="h-8 w-8" />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 group-hover:text-teal-600 transition-colors">
-                    {specialty.name}
-                  </h3>
-                </Link>
-              );
-            })}
-          </div>
+          {specialtiesLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-white rounded-2xl p-6 animate-pulse">
+                  <div className="w-16 h-16 bg-gray-200 rounded-2xl mx-auto mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                </div>
+              ))}
+            </div>
+          ) : specialties.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">لا توجد تخصصات متاحة</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {specialties.slice(0, 6).map((specialty) => {
+                const IconComponent = getIconComponent(specialty.icon);
+                const colorClasses = specialty.color || 'bg-teal-100 text-teal-600';
+                
+                return (
+                  <Link 
+                    key={specialty.id}
+                    href={`/search?specialty=${specialty.id}`}
+                    className="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-lg transition-all duration-300 group"
+                  >
+                    <div className={`w-16 h-16 ${colorClasses} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
+                      <IconComponent className="h-8 w-8" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 group-hover:text-teal-600 transition-colors">
+                      {specialty.name}
+                    </h3>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
 
           <div className="text-center mt-12">
             <Link href="/specialties">
