@@ -10,8 +10,6 @@ export async function GET(request: NextRequest) {
     const specialty = searchParams.get('specialty') || '';
     const status = searchParams.get('status') || '';
 
-    console.log('API Filters:', { search, specialty, status, page, limit });
-
     // جلب جميع الأطباء مع التفاصيل
     const allDoctors = db.getDoctors().map(doctor => {
       const user = db.getUserById(doctor.user_id);
@@ -55,14 +53,11 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    console.log('Total doctors before filtering:', allDoctors.length);
-
     let filteredDoctors = [...allDoctors];
 
     // تطبيق الفلاتر
     if (search && search.trim() !== '') {
       const searchTerm = search.toLowerCase().trim();
-      console.log('Applying search filter:', searchTerm);
       
       filteredDoctors = filteredDoctors.filter(doctor => {
         // البحث في الاسم
@@ -93,20 +88,15 @@ export async function GET(request: NextRequest) {
         
         return matches;
       });
-      
-      console.log('After search filter:', filteredDoctors.length);
     }
 
     if (specialty && specialty.trim() !== '') {
-      console.log('Applying specialty filter:', specialty);
       filteredDoctors = filteredDoctors.filter(doctor =>
         doctor.specialty && doctor.specialty.toLowerCase().includes(specialty.toLowerCase())
       );
-      console.log('After specialty filter:', filteredDoctors.length);
     }
 
     if (status && status.trim() !== '' && status !== 'all') {
-      console.log('Applying status filter:', status);
       
       if (status === 'active') {
         filteredDoctors = filteredDoctors.filter(doctor => doctor.isActive === true);
@@ -117,8 +107,6 @@ export async function GET(request: NextRequest) {
       } else if (status === 'unverified') {
         filteredDoctors = filteredDoctors.filter(doctor => doctor.isVerified === false);
       }
-      
-      console.log('After status filter:', filteredDoctors.length);
     }
 
     // تطبيق الـ pagination
@@ -140,19 +128,9 @@ export async function GET(request: NextRequest) {
         search: search || '',
         specialty: specialty || '',
         status: status || ''
-      },
-      debug: {
-        totalDoctorsBeforeFilter: allDoctors.length,
-        totalDoctorsAfterFilter: filteredDoctors.length,
-        appliedFilters: {
-          hasSearch: !!search,
-          hasSpecialty: !!specialty,
-          hasStatus: !!status
-        }
       }
     });
   } catch (error: any) {
-    console.error('Error fetching doctors:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

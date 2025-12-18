@@ -50,7 +50,6 @@ export default function AdminSpecialtiesPage() {
         setSpecialties(result.data);
       }
     } catch (error) {
-      console.error('Error loading specialties:', error);
     } finally {
       setLoading(false);
     }
@@ -82,7 +81,6 @@ export default function AdminSpecialtiesPage() {
         alert('حدث خطأ في العملية');
       }
     } catch (error) {
-      console.error('Error saving specialty:', error);
       alert('حدث خطأ في العملية');
     }
   };
@@ -111,7 +109,6 @@ export default function AdminSpecialtiesPage() {
           alert('حدث خطأ في حذف التخصص');
         }
       } catch (error) {
-        console.error('Error deleting specialty:', error);
         alert('حدث خطأ في حذف التخصص');
       }
     }

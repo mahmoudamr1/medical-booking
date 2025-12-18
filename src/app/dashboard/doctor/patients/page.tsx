@@ -50,7 +50,6 @@ export default function DoctorPatientsPage() {
       const allDoctorsData = await allDoctorsResult.json();
       
       if (!allDoctorsData.success || !allDoctorsData.data || allDoctorsData.data.length === 0) {
-        console.error('No doctors found');
         toast.error('لم يتم العثور على أطباء في النظام');
         return;
       }
@@ -96,7 +95,7 @@ export default function DoctorPatientsPage() {
         setPatients(Array.from(patientsMap.values()));
       }
     } catch (error) {
-      console.error('Error loading patients:', error);
+      toast.error('حدث خطأ في تحميل المرضى');
     } finally {
       setLoading(false);
     }

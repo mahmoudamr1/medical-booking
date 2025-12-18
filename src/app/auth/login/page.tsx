@@ -164,28 +164,6 @@ export default function LoginPage() {
                   </Button>
                 </div>
               </form>
-
-              {/* Demo Accounts */}
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="text-sm font-medium text-gray-900 mb-4">حسابات تجريبية:</h3>
-                <div className="space-y-2 text-xs text-gray-600">
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="font-medium text-gray-900 mb-1">أدمن:</div>
-                    <div>البريد: mahmoudamr700@gmail.com</div>
-                    <div>كلمة المرور: 0123456789</div>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="font-medium text-gray-900 mb-1">طبيب:</div>
-                    <div>البريد: doctor1@clinic.com إلى doctor5@clinic.com</div>
-                    <div>كلمة المرور: 12345678</div>
-                  </div>
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="font-medium text-gray-900 mb-1">مريض:</div>
-                    <div>البريد: patient1@example.com إلى patient3@example.com</div>
-                    <div>كلمة المرور: password123</div>
-                  </div>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>

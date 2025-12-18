@@ -4,16 +4,113 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Users, Search, Filter, Eye, Edit, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowRight, Users, Search, Filter, Eye, Edit, Trash2, CheckCircle, XCircle, Calendar } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+
+// مكون عرض حجوزات الطبيب
+function DoctorAppointments({ doctorId }: { doctorId: string }) {
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAppointments = async () => {
+      try {
+        const response = await fetch(`/api/bookings?doctorId=${doctorId}&_t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+          }
+        });
+        const result = await response.json();
+        if (result.success) {
+          setAppointments(result.data || []);
+          console.log(`📊 Loaded ${result.data?.length || 0} appointments for doctor ${doctorId}`);
+        }
+      } catch (error) {
+        console.error('Error loading appointments:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (doctorId) {
+      loadAppointments();
+      // تحديث البيانات كل 10 ثواني
+      const interval = setInterval(loadAppointments, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [doctorId]);
+
+  if (loading) {
+    return (
+      <div className="mt-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">الحجوزات</label>
+        <div className="text-center py-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-6">
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        الحجوزات ({appointments.length})
+      </label>
+      
+      {appointments.length === 0 ? (
+        <div className="bg-gray-50 p-4 rounded-lg text-center text-gray-500">
+          <Calendar className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+          <p>لا توجد حجوزات</p>
+        </div>
+      ) : (
+        <div className="bg-gray-50 p-4 rounded-lg max-h-60 overflow-y-auto">
+          <div className="space-y-3">
+            {appointments.map((appointment) => (
+              <div key={appointment.id} className="bg-white p-3 rounded-lg border">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-medium text-gray-900">{appointment.patient_name}</p>
+                    <p className="text-sm text-gray-600">
+                      {appointment.date} - {appointment.start_time}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {appointment.notes || 'لا توجد ملاحظات'}
+                    </p>
+                  </div>
+                  <div className="text-left">
+                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                      appointment.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                      appointment.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      appointment.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {appointment.status === 'confirmed' ? 'مؤكد' :
+                       appointment.status === 'completed' ? 'مكتمل' :
+                       appointment.status === 'cancelled' ? 'ملغي' : 'في الانتظار'}
+                    </span>
+                    <p className="text-sm font-medium text-gray-900 mt-1">
+                      {appointment.price} ريال
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 
 interface Doctor {
   id: string;
   doctorName?: string;
+  name?: string;
   user?: string;
-  specialty: string;
-  location: string;
+  specialty?: string;
+  location?: string;
   price: number;
   consultation_duration: number;
   bio: string;
@@ -21,8 +118,8 @@ interface Doctor {
   is_active: boolean;
   expand?: {
     user?: { name: string };
-    specialty: { name: string };
-    location: { governorate: string; area: string };
+    specialty?: { name: string; description?: string };
+    location?: { governorate: string; area: string };
   };
 }
 
@@ -35,27 +132,20 @@ export default function AdminDoctorsPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'verified' | 'unverified' | 'active' | 'inactive'>('all');
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
 
+  // التحقق من الصلاحيات
   useEffect(() => {
     if (!authLoading && (!isAuthenticated || !user || user.role !== 'admin')) {
       router.push('/dashboard/admin');
-      return;
     }
-    
-    if (isAuthenticated && user && user.role === 'admin') {
-      loadDoctors();
-    }
-  }, [authLoading, isAuthenticated, user]);
+  }, [authLoading, isAuthenticated, user?.role, router]);
 
   const loadDoctors = async () => {
-    // التأكد من أن المستخدم مصادق عليه قبل تحميل البيانات
     if (!isAuthenticated || !user || user.role !== 'admin') {
-      console.log('User not authenticated or not admin, skipping load');
       return;
     }
 
     setLoading(true);
     try {
-      // بناء URL مع الفلاتر
       const params = new URLSearchParams();
       
       if (searchTerm && searchTerm.trim()) {
@@ -66,56 +156,40 @@ export default function AdminDoctorsPage() {
         params.append('status', filterStatus);
       }
       
-      // إضافة pagination
       params.append('page', '1');
-      params.append('limit', '100'); // جلب عدد كبير لعرض جميع النتائج
+      params.append('limit', '100');
       
       const url = `/api/admin/doctors${params.toString() ? '?' + params.toString() : ''}`;
-      console.log('Loading doctors with URL:', url);
-      console.log('Current filters:', { searchTerm, filterStatus });
-      
       const response = await fetch(url);
       const result = await response.json();
       
-      console.log('API Response:', result);
-      console.log('Setting doctors to:', result.data);
-      
       if (result.success && result.data) {
         setDoctors(result.data);
-        console.log('Doctors state updated, new length:', result.data.length);
       } else {
-        console.error('API Error:', result);
         setDoctors([]);
       }
     } catch (error) {
-      console.error('Error loading doctors:', error);
       setDoctors([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // useEffect منفصل للفلاتر
+  // تحميل الأطباء عند تغيير الفلاتر
   useEffect(() => {
-    console.log('useEffect triggered with:', { searchTerm, filterStatus, isAuthenticated: !!isAuthenticated, userRole: user?.role });
-    
-    const timeoutId = setTimeout(() => {
-      console.log('Calling loadDoctors after timeout');
-      loadDoctors();
-    }, searchTerm ? 300 : 0); // تأخير 300ms للبحث، فوري للفلاتر الأخرى
+    if (!isAuthenticated || !user || user.role !== 'admin') {
+      return;
+    }
 
-    return () => {
-      console.log('Clearing timeout');
-      clearTimeout(timeoutId);
-    };
-  }, [searchTerm, filterStatus, isAuthenticated, user]);
+    const timeoutId = setTimeout(() => {
+      loadDoctors();
+    }, searchTerm ? 300 : 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, filterStatus, isAuthenticated, user?.role]);
 
   // إزالة الفلتر المكرر - الفلتر يتم في الـ API
   const filteredDoctors = doctors;
-  
-  console.log('Render - Current doctors:', doctors.length);
-  console.log('Render - Current search term:', searchTerm);
-  console.log('Render - Current filter status:', filterStatus);
 
   const getStatusBadge = (doctor: Doctor) => {
     if (!doctor.is_verified) {
@@ -146,7 +220,6 @@ export default function AdminDoctorsPage() {
         alert('حدث خطأ في تحديث حالة الاعتماد');
       }
     } catch (error) {
-      console.error('Error updating verification:', error);
       alert('حدث خطأ في تحديث حالة الاعتماد');
     }
   };
@@ -170,7 +243,6 @@ export default function AdminDoctorsPage() {
         alert('حدث خطأ في تحديث حالة النشاط');
       }
     } catch (error) {
-      console.error('Error updating active status:', error);
       alert('حدث خطأ في تحديث حالة النشاط');
     }
   };
@@ -189,7 +261,6 @@ export default function AdminDoctorsPage() {
           alert('حدث خطأ في حذف الطبيب');
         }
       } catch (error) {
-        console.error('Error deleting doctor:', error);
         alert('حدث خطأ في حذف الطبيب');
       }
     }
@@ -279,10 +350,7 @@ export default function AdminDoctorsPage() {
                     type="text"
                     placeholder="البحث بالاسم، التخصص، أو المنطقة..."
                     value={searchTerm}
-                    onChange={(e) => {
-                      console.log('Search input changed to:', e.target.value);
-                      setSearchTerm(e.target.value);
-                    }}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -290,12 +358,13 @@ export default function AdminDoctorsPage() {
               
               <div className="flex items-center gap-2">
                 <Filter className="h-5 w-5 text-gray-400" />
+                
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value as any)}
                   className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="all">جميع الأطباء</option>
+                  <option value="all">جميع الحالات</option>
                   <option value="verified">المعتمدون</option>
                   <option value="unverified">غير المعتمدين</option>
                   <option value="active">النشطون</option>
@@ -418,12 +487,9 @@ export default function AdminDoctorsPage() {
                           {getStatusBadge(doctor)}
                         </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 mb-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
                           <div>
-                            <span className="font-medium">التخصص:</span> {doctor.expand?.specialty?.name || 'غير محدد'}
-                          </div>
-                          <div>
-                            <span className="font-medium">المنطقة:</span> {doctor.expand?.location?.area || 'غير محدد'}
+                            <span className="font-medium">المنطقة:</span> {doctor.expand?.location?.area || doctor.location || 'غير محدد'}
                           </div>
                           <div>
                             <span className="font-medium">السعر:</span> {doctor.price} ريال
@@ -502,23 +568,17 @@ export default function AdminDoctorsPage() {
               </div>
               
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">الاسم</label>
-                    <p className="text-gray-900">
-                      {selectedDoctor.doctorName || selectedDoctor.expand?.user?.name || 'غير محدد'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">التخصص</label>
-                    <p className="text-gray-900">{selectedDoctor.expand?.specialty?.name || 'غير محدد'}</p>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">الاسم</label>
+                  <p className="text-gray-900">
+                    {selectedDoctor.doctorName || selectedDoctor.expand?.user?.name || 'غير محدد'}
+                  </p>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">المنطقة</label>
-                    <p className="text-gray-900">{selectedDoctor.expand?.location?.area || 'غير محدد'}</p>
+                    <p className="text-gray-900">{selectedDoctor.expand?.location?.area || selectedDoctor.location || 'غير محدد'}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700">السعر</label>
@@ -543,6 +603,8 @@ export default function AdminDoctorsPage() {
                   <label className="block text-sm font-medium text-gray-700">النبذة التعريفية</label>
                   <p className="text-gray-900 bg-gray-50 p-3 rounded-lg">{selectedDoctor.bio || 'لا توجد نبذة'}</p>
                 </div>
+                
+                <DoctorAppointments doctorId={selectedDoctor.id} />
               </div>
               
               <div className="flex gap-3 mt-6">

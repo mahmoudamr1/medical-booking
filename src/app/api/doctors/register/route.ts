@@ -133,7 +133,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Error during doctor registration:', error);
     return NextResponse.json(
       { success: false, error: 'حدث خطأ في تسجيل الطبيب' },
       { status: 500 }

@@ -32,16 +32,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // البحث عن مريض موجود أو إنشاء مريض جديد
+    // البحث عن مريض موجود أو إنشاء مريض ضيف جديد
     let patient = db.getUserByEmail(patientEmail);
     
     if (!patient) {
-      // إنشاء مريض جديد
+      // إنشاء مريض ضيف جديد (لا يحتاج تسجيل دخول)
       patient = db.createUser({
         email: patientEmail,
         name: patientName,
         phone: patientPhone,
-        password: 'temp123456', // كلمة مرور مؤقتة
+        password: Math.random().toString(36).slice(-8), // كلمة مرور عشوائية
         role: 'patient',
         is_active: true
       });
@@ -85,7 +85,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Error creating booking:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'حدث خطأ في إنشاء الحجز' },
       { status: 500 }
@@ -99,6 +98,7 @@ export async function GET(request: NextRequest) {
     const doctorId = searchParams.get('doctorId');
     const patientId = searchParams.get('patientId');
     const status = searchParams.get('status');
+    const date = searchParams.get('date');
 
     let appointments;
 
@@ -115,6 +115,11 @@ export async function GET(request: NextRequest) {
       appointments = appointments.filter(apt => apt.status === status);
     }
 
+    // تطبيق فلتر التاريخ إذا تم تحديده
+    if (date) {
+      appointments = appointments.filter(apt => apt.date === date);
+    }
+
     // إضافة بيانات إضافية لكل موعد
     const enrichedAppointments = appointments.map(appointment => {
       const doctor = db.getDoctorById(appointment.doctor_id);
@@ -124,6 +129,8 @@ export async function GET(request: NextRequest) {
 
       return {
         ...appointment,
+        doctorName: doctorUser?.name || 'غير محدد',
+        doctorSpecialty: specialty?.name || 'غير محدد',
         expand: {
           patient: patient ? {
             id: patient.id,
@@ -148,7 +155,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, data: enrichedAppointments });
 
   } catch (error: any) {
-    console.error('Error fetching bookings:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

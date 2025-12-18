@@ -4,9 +4,9 @@ import { db } from '@/lib/database';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const specialty = searchParams.get('specialty') || '';
-    const location = searchParams.get('location') || '';
-    const searchTerm = searchParams.get('search') || '';
+    const specialty = decodeURIComponent(searchParams.get('specialty') || '');
+    const location = decodeURIComponent(searchParams.get('location') || '');
+    const searchTerm = decodeURIComponent(searchParams.get('search') || searchParams.get('q') || '');
     const minPrice = parseInt(searchParams.get('minPrice') || '0');
     const maxPrice = parseInt(searchParams.get('maxPrice') || '999999');
     const sortBy = searchParams.get('sortBy') || 'rating'; // rating, price, experience
@@ -99,7 +99,6 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error: any) {
-    console.error('Error searching doctors:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

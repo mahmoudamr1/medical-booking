@@ -2,43 +2,11 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { Calendar, ChevronDown, Menu, X } from 'lucide-react';
-import { dataAPI, doctorsAPI, Doctor, Specialty } from '@/lib/pocketbase';
+import { Calendar, Menu, X } from 'lucide-react';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const { data: specialties = [], isLoading: isLoadingSpecialties } = useQuery<Specialty[]>({
-    queryKey: ['header-specialties'],
-    queryFn: async () => {
-      const res = await dataAPI.getSpecialties();
-      return res.success ? res.data : [];
-    },
-    staleTime: 5 * 60 * 1000
-  });
-
-  const { data: fallbackSpecialties = [] } = useQuery<Specialty[]>({
-    queryKey: ['header-fallback-specialties'],
-    queryFn: async () => {
-      const res = await doctorsAPI.searchDoctors({ page: 1, limit: 50 });
-      if (!res.success || !res.data) return [];
-
-      const unique: Record<string, Specialty> = {};
-      (res.data.items as Doctor[]).forEach((doc) => {
-        const spec = doc.expand?.specialty;
-        if (spec && !unique[spec.id]) {
-          unique[spec.id] = spec;
-        }
-      });
-      return Object.values(unique);
-    },
-    enabled: specialties.length === 0,
-    staleTime: 5 * 60 * 1000
-  });
-
-  const displaySpecialties = specialties.length > 0 ? specialties : fallbackSpecialties;
 
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
@@ -60,39 +28,6 @@ export default function Header() {
               <Link href="/search" className="text-gray-600 hover:text-gray-900 transition-colors">
                 الأطباء
               </Link>
-              <div className="relative group">
-                <button className="flex items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors">
-                  <span>التخصصات</span>
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-                <div className="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-20">
-                  {isLoadingSpecialties ? (
-                    <div className="px-4 py-3 text-sm text-gray-500">جاري التحميل...</div>
-                  ) : displaySpecialties.length === 0 ? (
-                    <div className="px-4 py-3 text-sm text-gray-500">لا توجد تخصصات متاحة</div>
-                  ) : (
-                    displaySpecialties.slice(0, 12).map((specialty) => (
-                      <Link
-                        key={specialty.id}
-                        href={`/search?specialty=${specialty.id}`}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                      >
-                        {specialty.name}
-                      </Link>
-                    ))
-                  )}
-                  {displaySpecialties.length > 12 && (
-                    <div className="border-t border-gray-100 mt-1">
-                      <Link
-                        href="/search"
-                        className="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-50"
-                      >
-                        عرض جميع التخصصات
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </div>
             </nav>
           </div>
 

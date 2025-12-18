@@ -42,7 +42,6 @@ function StatsCards() {
           setStats(result.data);
         }
       } catch (error) {
-        console.error('Error fetching stats:', error);
       } finally {
         setLoading(false);
       }
@@ -265,12 +264,6 @@ export default function AdminDashboard() {
                 {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
               </Button>
             </form>
-
-            <div className="mt-6 text-center text-sm text-gray-500">
-              <p>بيانات تجريبية:</p>
-              <p>البريد: mahmoudamr700@gmail.com</p>
-              <p>كلمة المرور: 0123456789</p>
-            </div>
           </CardContent>
         </Card>
       </div>

@@ -6,12 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "setup": "node setup-clean.js",
-    "seed": "node setup-seed-data.js",
-    "seed-old": "node add-sample-data.js",
-    "setup-db": "node -r dotenv/config setup-db.js dotenv_config_path=.env.local",
-    "setup-db:http": "node -r dotenv/config setup-db-http.js dotenv_config_path=.env.local"
+    "lint": "eslint"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",

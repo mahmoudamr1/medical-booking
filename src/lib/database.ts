@@ -137,6 +137,16 @@ class LocalDatabase {
       { id: '12', name: 'د. ليلى حسن', email: 'doctor8@clinic.com', password: '12345678', role: 'doctor', phone: '+966503333333', is_active: true, created_at: new Date().toISOString() },
       { id: '13', name: 'د. خالد العتيبي', email: 'doctor9@clinic.com', password: '12345678', role: 'doctor', phone: '+966504444444', is_active: true, created_at: new Date().toISOString() },
       { id: '14', name: 'د. منى الزهراني', email: 'doctor10@clinic.com', password: '12345678', role: 'doctor', phone: '+966505555555', is_active: true, created_at: new Date().toISOString() },
+      { id: '15', name: 'د. عمر الشمري', email: 'doctor11@clinic.com', password: '12345678', role: 'doctor', phone: '+966506666666', is_active: true, created_at: new Date().toISOString() },
+      { id: '16', name: 'د. هدى القحطاني', email: 'doctor12@clinic.com', password: '12345678', role: 'doctor', phone: '+966507777777', is_active: true, created_at: new Date().toISOString() },
+      { id: '17', name: 'د. طارق الغامدي', email: 'doctor13@clinic.com', password: '12345678', role: 'doctor', phone: '+966508888888', is_active: true, created_at: new Date().toISOString() },
+      { id: '18', name: 'د. رنا السعيد', email: 'doctor14@clinic.com', password: '12345678', role: 'doctor', phone: '+966509999999', is_active: true, created_at: new Date().toISOString() },
+      { id: '19', name: 'د. ماجد الدوسري', email: 'doctor15@clinic.com', password: '12345678', role: 'doctor', phone: '+966500000000', is_active: true, created_at: new Date().toISOString() },
+      { id: '20', name: 'د. سلمى الحربي', email: 'doctor16@clinic.com', password: '12345678', role: 'doctor', phone: '+966501010101', is_active: true, created_at: new Date().toISOString() },
+      { id: '21', name: 'د. فهد المطيري', email: 'doctor17@clinic.com', password: '12345678', role: 'doctor', phone: '+966502020202', is_active: true, created_at: new Date().toISOString() },
+      { id: '22', name: 'د. نادية العمري', email: 'doctor18@clinic.com', password: '12345678', role: 'doctor', phone: '+966503030303', is_active: true, created_at: new Date().toISOString() },
+      { id: '23', name: 'د. بدر الشهري', email: 'doctor19@clinic.com', password: '12345678', role: 'doctor', phone: '+966504040404', is_active: true, created_at: new Date().toISOString() },
+      { id: '24', name: 'د. ريم الخالدي', email: 'doctor20@clinic.com', password: '12345678', role: 'doctor', phone: '+966505050505', is_active: true, created_at: new Date().toISOString() },
       
       // المرضى
       { id: '7', name: 'أحمد علي', email: 'patient1@example.com', password: 'password123', role: 'patient', phone: '+966551234567', is_active: true, created_at: new Date().toISOString() },
@@ -156,6 +166,16 @@ class LocalDatabase {
       { id: '8', user_id: '12', specialty_id: '8', location_id: '10', price: 350, consultation_duration: 40, bio: 'استشارية طب النساء والولادة مع خبرة 14 عام', experience_years: 14, license_number: 'LIC008', is_verified: true, is_active: true, rating: 4.7, total_reviews: 198, created_at: new Date().toISOString() },
       { id: '9', user_id: '13', specialty_id: '9', location_id: '11', price: 200, consultation_duration: 20, bio: 'استشاري الأمراض الجلدية مع خبرة 9 سنوات', experience_years: 9, license_number: 'LIC009', is_verified: true, is_active: true, rating: 4.4, total_reviews: 67, created_at: new Date().toISOString() },
       { id: '10', user_id: '14', specialty_id: '10', location_id: '12', price: 180, consultation_duration: 25, bio: 'استشارية طب الأسنان مع خبرة 11 عام', experience_years: 11, license_number: 'LIC010', is_verified: true, is_active: true, rating: 4.6, total_reviews: 134, created_at: new Date().toISOString() },
+      { id: '11', user_id: '15', specialty_id: '1', location_id: '4', price: 320, consultation_duration: 30, bio: 'استشاري أمراض القلب والشرايين مع خبرة 13 عام', experience_years: 13, license_number: 'LIC011', is_verified: true, is_active: true, rating: 4.7, total_reviews: 98, created_at: new Date().toISOString() },
+      { id: '12', user_id: '16', specialty_id: '2', location_id: '2', price: 260, consultation_duration: 30, bio: 'استشارية طب الأطفال وحديثي الولادة مع خبرة 10 سنوات', experience_years: 10, license_number: 'LIC012', is_verified: true, is_active: true, rating: 4.8, total_reviews: 112, created_at: new Date().toISOString() },
+      { id: '13', user_id: '17', specialty_id: '3', location_id: '6', price: 290, consultation_duration: 25, bio: 'استشاري طب وجراحة العيون مع خبرة 16 عام', experience_years: 16, license_number: 'LIC013', is_verified: true, is_active: true, rating: 4.6, total_reviews: 145, created_at: new Date().toISOString() },
+      { id: '14', user_id: '18', specialty_id: '4', location_id: '9', price: 360, consultation_duration: 45, bio: 'استشارية طب الأعصاب والدماغ مع خبرة 12 عام', experience_years: 12, license_number: 'LIC014', is_verified: true, is_active: true, rating: 4.7, total_reviews: 87, created_at: new Date().toISOString() },
+      { id: '15', user_id: '19', specialty_id: '5', location_id: '1', price: 310, consultation_duration: 35, bio: 'استشاري جراحة العظام والمفاصل مع خبرة 18 عام', experience_years: 18, license_number: 'LIC015', is_verified: true, is_active: true, rating: 4.8, total_reviews: 176, created_at: new Date().toISOString() },
+      { id: '16', user_id: '20', specialty_id: '6', location_id: '5', price: 270, consultation_duration: 30, bio: 'استشارية الطب الباطني والسكري مع خبرة 9 سنوات', experience_years: 9, license_number: 'LIC016', is_verified: true, is_active: true, rating: 4.5, total_reviews: 56, created_at: new Date().toISOString() },
+      { id: '17', user_id: '21', specialty_id: '7', location_id: '8', price: 420, consultation_duration: 50, bio: 'استشاري الجراحة العامة والمناظير مع خبرة 25 عام', experience_years: 25, license_number: 'LIC017', is_verified: true, is_active: true, rating: 4.9, total_reviews: 289, created_at: new Date().toISOString() },
+      { id: '18', user_id: '22', specialty_id: '8', location_id: '3', price: 340, consultation_duration: 40, bio: 'استشارية طب النساء والتوليد مع خبرة 15 عام', experience_years: 15, license_number: 'LIC018', is_verified: true, is_active: true, rating: 4.8, total_reviews: 203, created_at: new Date().toISOString() },
+      { id: '19', user_id: '23', specialty_id: '9', location_id: '7', price: 220, consultation_duration: 20, bio: 'استشاري الأمراض الجلدية والتجميل مع خبرة 11 عام', experience_years: 11, license_number: 'LIC019', is_verified: true, is_active: true, rating: 4.6, total_reviews: 92, created_at: new Date().toISOString() },
+      { id: '20', user_id: '24', specialty_id: '10', location_id: '4', price: 190, consultation_duration: 25, bio: 'استشارية طب وتجميل الأسنان مع خبرة 13 عام', experience_years: 13, license_number: 'LIC020', is_verified: true, is_active: true, rating: 4.7, total_reviews: 158, created_at: new Date().toISOString() },
     ];
 
     // إنشاء جداول الأطباء
@@ -180,34 +200,133 @@ class LocalDatabase {
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const dayAfterTomorrow = new Date(today);
+    dayAfterTomorrow.setDate(today.getDate() + 2);
     
     this.appointments = [
+      // مواعيد د. أحمد محمد السيد (doctor_id: 1)
       {
         id: '1',
         doctor_id: '1',
         patient_id: '7',
-        date: tomorrow.toISOString().split('T')[0],
+        date: today.toISOString().split('T')[0],
         start_time: '09:00',
         end_time: '09:30',
         status: 'confirmed',
         price: 300,
         notes: 'فحص دوري للقلب',
-        patient_name: 'أحمد علي',
+        patient_name: 'أحمد علي محمد',
         patient_email: 'patient1@example.com',
         patient_phone: '+966551234567',
         created_at: new Date().toISOString()
       },
       {
         id: '2',
-        doctor_id: '2',
+        doctor_id: '1',
         patient_id: '8',
         date: today.toISOString().split('T')[0],
         start_time: '10:30',
         end_time: '11:00',
+        status: 'confirmed',
+        price: 300,
+        notes: 'استشارة أمراض القلب',
+        patient_name: 'فاطمة محمد أحمد',
+        patient_email: 'patient2@example.com',
+        patient_phone: '+966557654321',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: '3',
+        doctor_id: '1',
+        patient_id: '9',
+        date: tomorrow.toISOString().split('T')[0],
+        start_time: '09:30',
+        end_time: '10:00',
+        status: 'confirmed',
+        price: 300,
+        notes: 'متابعة ضغط الدم',
+        patient_name: 'محمد أحمد سالم',
+        patient_email: 'patient3@example.com',
+        patient_phone: '+966559876543',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: '4',
+        doctor_id: '1',
+        patient_id: '7',
+        date: yesterday.toISOString().split('T')[0],
+        start_time: '11:00',
+        end_time: '11:30',
         status: 'completed',
+        price: 300,
+        notes: 'فحص شامل للقلب',
+        patient_name: 'أحمد علي محمد',
+        patient_email: 'patient1@example.com',
+        patient_phone: '+966551234567',
+        created_at: new Date().toISOString()
+      },
+      
+      // مواعيد د. فاطمة علي أحمد (doctor_id: 2)
+      {
+        id: '5',
+        doctor_id: '2',
+        patient_id: '8',
+        date: today.toISOString().split('T')[0],
+        start_time: '14:00',
+        end_time: '14:30',
+        status: 'confirmed',
         price: 250,
         notes: 'فحص طفل',
-        patient_name: 'فاطمة محمد',
+        patient_name: 'فاطمة محمد أحمد',
+        patient_email: 'patient2@example.com',
+        patient_phone: '+966557654321',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: '6',
+        doctor_id: '2',
+        patient_id: '9',
+        date: tomorrow.toISOString().split('T')[0],
+        start_time: '15:00',
+        end_time: '15:30',
+        status: 'confirmed',
+        price: 250,
+        notes: 'تطعيمات الأطفال',
+        patient_name: 'محمد أحمد سالم',
+        patient_email: 'patient3@example.com',
+        patient_phone: '+966559876543',
+        created_at: new Date().toISOString()
+      },
+      
+      // مواعيد د. يوسف إبراهيم (doctor_id: 7)
+      {
+        id: '7',
+        doctor_id: '7',
+        patient_id: '7',
+        date: today.toISOString().split('T')[0],
+        start_time: '16:00',
+        end_time: '16:45',
+        status: 'confirmed',
+        price: 400,
+        notes: 'استشارة جراحية',
+        patient_name: 'أحمد علي محمد',
+        patient_email: 'patient1@example.com',
+        patient_phone: '+966551234567',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: '8',
+        doctor_id: '7',
+        patient_id: '8',
+        date: dayAfterTomorrow.toISOString().split('T')[0],
+        start_time: '10:00',
+        end_time: '10:45',
+        status: 'confirmed',
+        price: 400,
+        notes: 'عملية جراحية صغرى',
+        patient_name: 'فاطمة محمد أحمد',
         patient_email: 'patient2@example.com',
         patient_phone: '+966557654321',
         created_at: new Date().toISOString()
@@ -391,36 +510,39 @@ class LocalDatabase {
         if (specialty?.name !== filters.specialty) return false;
       }
 
-      // فلتر الموقع
+      // فلتر الموقع - البحث في المحافظة أو المنطقة
       if (filters.location && filters.location.trim() !== '') {
-        if (location?.governorate !== filters.location) return false;
+        const locationFilter = decodeURIComponent(filters.location).trim();
+        const matchesGovernorate = location?.governorate === locationFilter;
+        const matchesArea = location?.area === locationFilter;
+        if (!matchesGovernorate && !matchesArea) return false;
       }
 
       // فلتر البحث النصي
       if (filters.searchTerm && filters.searchTerm.trim() !== '') {
-        const searchLower = filters.searchTerm.toLowerCase().trim();
+        const searchTerm = decodeURIComponent(filters.searchTerm).toLowerCase().trim();
         
         // البحث في اسم الطبيب
-        const matchesName = user?.name && user.name.toLowerCase().includes(searchLower);
+        const matchesName = user?.name && user.name.toLowerCase().includes(searchTerm);
         
         // البحث في الوصف
-        const matchesBio = doctor.bio && doctor.bio.toLowerCase().includes(searchLower);
+        const matchesBio = doctor.bio && doctor.bio.toLowerCase().includes(searchTerm);
         
         // البحث في التخصص
-        const matchesSpecialty = specialty?.name && specialty.name.toLowerCase().includes(searchLower);
+        const matchesSpecialty = specialty?.name && specialty.name.toLowerCase().includes(searchTerm);
         
         // البحث في الموقع
-        const matchesLocation = location?.governorate && location.governorate.toLowerCase().includes(searchLower);
-        const matchesArea = location?.area && location.area.toLowerCase().includes(searchLower);
+        const matchesLocation = location?.governorate && location.governorate.toLowerCase().includes(searchTerm);
+        const matchesArea = location?.area && location.area.toLowerCase().includes(searchTerm);
         
         // البحث في البريد الإلكتروني
-        const matchesEmail = user?.email && user.email.toLowerCase().includes(searchLower);
+        const matchesEmail = user?.email && user.email.toLowerCase().includes(searchTerm);
         
         // البحث في رقم الهاتف
-        const matchesPhone = user?.phone && user.phone.includes(searchLower);
+        const matchesPhone = user?.phone && user.phone.includes(searchTerm);
         
         // البحث في رقم الترخيص
-        const matchesLicense = doctor.license_number && doctor.license_number.toLowerCase().includes(searchLower);
+        const matchesLicense = doctor.license_number && doctor.license_number.toLowerCase().includes(searchTerm);
         
         if (!matchesName && !matchesBio && !matchesSpecialty && !matchesLocation && 
             !matchesArea && !matchesEmail && !matchesPhone && !matchesLicense) {
@@ -440,6 +562,7 @@ class LocalDatabase {
     const totalAppointments = this.appointments.length;
     const todayAppointments = this.appointments.filter(a => a.date === new Date().toISOString().split('T')[0]).length;
     const totalSpecialties = this.specialties.length;
+    const totalCities = [...new Set(this.locations.map(l => l.governorate))].length;
 
     return {
       totalDoctors,
@@ -448,7 +571,8 @@ class LocalDatabase {
       totalPatients,
       totalAppointments,
       todayAppointments,
-      totalSpecialties
+      totalSpecialties,
+      totalCities
     };
   }
 }

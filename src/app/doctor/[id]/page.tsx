@@ -7,7 +7,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, Clock, MapPin, Phone, Mail, User, Users, ArrowRight } from 'lucide-react';
-import { doctorsAPI } from '@/lib/pocketbase';
+
 import MainLayout from '@/components/layout/MainLayout';
 import Link from 'next/link';
 
@@ -26,7 +26,8 @@ export default function DoctorProfilePage() {
   const { data: doctor, isLoading: doctorLoading } = useQuery({
     queryKey: ['doctor', doctorId],
     queryFn: async () => {
-      const result = await doctorsAPI.getDoctorProfile(doctorId);
+      const response = await fetch(`/api/doctors/${doctorId}`);
+      const result = await response.json();
       return result.success ? result.data : null;
     }
   });
@@ -104,15 +105,11 @@ export default function DoctorProfilePage() {
           patientPhone,
           appointmentDate: selectedDate,
           startTime: selectedTime,
-          endTime: getEndTime(selectedTime, doctor?.consultation_duration || 30),
+          endTime: getEndTime(selectedTime, doctor?.consultationDuration || 30),
           price: doctor?.price || 0,
           notes: bookingNotes
         })
       });
-
-      if (!response.ok) {
-        throw new Error('فشل في إنشاء الحجز');
-      }
 
       const result = await response.json();
       
@@ -129,7 +126,6 @@ export default function DoctorProfilePage() {
         throw new Error(result.error || 'فشل في الحجز');
       }
     } catch (error: any) {
-      console.error('Booking error:', error);
       toast.error('حدث خطأ في الحجز: ' + error.message);
     }
   };
@@ -188,7 +184,7 @@ export default function DoctorProfilePage() {
               <span>›</span>
               <Link href="/search" className="hover:text-blue-600">الأطباء</Link>
               <span>›</span>
-              <span className="text-gray-900">{doctor.doctorName || doctor.expand?.user?.name}</span>
+              <span className="text-gray-900">{doctor.name}</span>
             </div>
           </div>
         </div>
@@ -206,20 +202,28 @@ export default function DoctorProfilePage() {
                     
                     <div className="flex-1">
                       <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                        {doctor.doctorName || doctor.expand?.user?.name || 'طبيب'}
+                        {doctor.name}
                       </h1>
                       <p className="text-xl text-blue-600 font-medium mb-4">
-                        {doctor.expand?.specialty?.name || 'تخصص طبي'}
+                        {doctor.specialty}
                       </p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div className="flex items-center gap-2 text-gray-600">
                           <MapPin className="h-5 w-5" />
-                          <span>{doctor.expand?.location?.governorate} - {doctor.expand?.location?.area}</span>
+                          <span>{doctor.governorate} - {doctor.area}</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-600">
                           <Clock className="h-5 w-5" />
-                          <span>{doctor.consultation_duration} دقيقة</span>
+                          <span>{doctor.consultationDuration} دقيقة</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <User className="h-5 w-5" />
+                          <span>{doctor.experience} سنة خبرة</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Users className="h-5 w-5" />
+                          <span>⭐ {doctor.rating} ({doctor.reviews} تقييم)</span>
                         </div>
                       </div>
                       
@@ -244,12 +248,23 @@ export default function DoctorProfilePage() {
                   <h3 className="text-xl font-bold text-gray-900 mb-4">معلومات الاتصال</h3>
                   <div className="space-y-4">
                     <Button 
-                      onClick={() => window.open(`tel:+966500000000`, '_self')}
+                      onClick={() => window.open(`tel:${doctor.phone}`, '_self')}
                       className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg flex items-center justify-center gap-2"
                     >
                       <Phone className="h-5 w-5" />
                       اتصال هاتفي
                     </Button>
+                    
+                    {doctor.email && (
+                      <Button 
+                        onClick={() => window.open(`mailto:${doctor.email}`, '_self')}
+                        variant="outline"
+                        className="w-full py-3 rounded-lg flex items-center justify-center gap-2"
+                      >
+                        <Mail className="h-5 w-5" />
+                        إرسال بريد إلكتروني
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -358,7 +373,7 @@ export default function DoctorProfilePage() {
                         <div className="text-sm space-y-1 text-gray-700">
                           <div>التاريخ: {selectedDate}</div>
                           <div>الوقت: {selectedTime}</div>
-                          <div>المدة: {doctor.consultation_duration} دقيقة</div>
+                          <div>المدة: {doctor.consultationDuration} دقيقة</div>
                           <div className="font-bold text-green-600">السعر: {doctor.price} ريال</div>
                         </div>
                       </div>

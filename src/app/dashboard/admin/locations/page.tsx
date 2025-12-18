@@ -48,7 +48,6 @@ export default function AdminLocationsPage() {
         setLocations(result.data);
       }
     } catch (error) {
-      console.error('Error loading locations:', error);
     } finally {
       setLoading(false);
     }
@@ -80,7 +79,6 @@ export default function AdminLocationsPage() {
         alert('حدث خطأ في العملية');
       }
     } catch (error) {
-      console.error('Error saving location:', error);
       alert('حدث خطأ في العملية');
     }
   };
@@ -109,7 +107,6 @@ export default function AdminLocationsPage() {
           alert(result.error || 'حدث خطأ في حذف الموقع');
         }
       } catch (error) {
-        console.error('Error deleting location:', error);
         alert('حدث خطأ في حذف الموقع');
       }
     }

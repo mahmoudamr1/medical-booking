@@ -38,7 +38,6 @@ export async function GET(request: NextRequest) {
       specialties: specialtiesWithCount
     });
   } catch (error: any) {
-    console.error('Error fetching specialties:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -70,7 +69,6 @@ export async function POST(request: NextRequest) {
       message: 'Specialty created successfully'
     });
   } catch (error: any) {
-    console.error('Error creating specialty:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

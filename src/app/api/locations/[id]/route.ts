@@ -28,7 +28,6 @@ export async function GET(
       }
     });
   } catch (error: any) {
-    console.error('Error fetching location:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -69,7 +68,6 @@ export async function PUT(
       message: 'Location updated successfully'
     });
   } catch (error: any) {
-    console.error('Error updating location:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -111,7 +109,6 @@ export async function DELETE(
       message: 'Location deleted successfully'
     });
   } catch (error: any) {
-    console.error('Error deleting location:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

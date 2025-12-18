@@ -6,6 +6,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Search, Heart, Brain, Eye, Bone, Baby, Stethoscope, Scissors, Ear } from 'lucide-react';
+import router from 'next/router';
 
 interface Specialty {
   id: string;
@@ -22,117 +23,60 @@ export default function SpecialtiesPage() {
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const allSpecialties: Specialty[] = [
-    {
-      id: '1',
-      name: 'طب القلب',
-      description: 'تشخيص وعلاج أمراض القلب والأوعية الدموية',
-      icon: Heart,
-      doctorCount: 45,
-      color: 'bg-red-100 text-red-600'
-    },
-    {
-      id: '2',
-      name: 'طب الأطفال',
-      description: 'الرعاية الصحية للأطفال من الولادة حتى المراهقة',
-      icon: Baby,
-      doctorCount: 38,
-      color: 'bg-pink-100 text-pink-600'
-    },
-    {
-      id: '3',
-      name: 'طب العيون',
-      description: 'تشخيص وعلاج أمراض العين والجهاز البصري',
-      icon: Eye,
-      doctorCount: 32,
-      color: 'bg-blue-100 text-blue-600'
-    },
-    {
-      id: '4',
-      name: 'طب الأعصاب',
-      description: 'تشخيص وعلاج اضطرابات الجهاز العصبي',
-      icon: Brain,
-      doctorCount: 28,
-      color: 'bg-purple-100 text-purple-600'
-    },
-    {
-      id: '5',
-      name: 'العظام والمفاصل',
-      description: 'علاج إصابات وأمراض العظام والمفاصل',
-      icon: Bone,
-      doctorCount: 42,
-      color: 'bg-orange-100 text-orange-600'
-    },
-    {
-      id: '6',
-      name: 'طب الباطنة',
-      description: 'التشخيص والعلاج الشامل للأمراض الداخلية',
-      icon: Stethoscope,
-      doctorCount: 55,
-      color: 'bg-green-100 text-green-600'
-    },
-    {
-      id: '7',
-      name: 'الجراحة العامة',
-      description: 'العمليات الجراحية للأمراض المختلفة',
-      icon: Scissors,
-      doctorCount: 35,
-      color: 'bg-gray-100 text-gray-600'
-    },
-    {
-      id: '8',
-      name: 'طب الأسنان',
-      description: 'علاج أمراض الفم والأسنان واللثة',
-      icon: Stethoscope,
-      doctorCount: 48,
-      color: 'bg-cyan-100 text-cyan-600'
-    },
-    {
-      id: '9',
-      name: 'الأنف والأذن والحنجرة',
-      description: 'تشخيص وعلاج أمراض الأنف والأذن والحنجرة',
-      icon: Ear,
-      doctorCount: 25,
-      color: 'bg-yellow-100 text-yellow-600'
-    },
-    {
-      id: '10',
-      name: 'النساء والتوليد',
-      description: 'الرعاية الصحية للنساء والحمل والولادة',
-      icon: Heart,
-      doctorCount: 40,
-      color: 'bg-rose-100 text-rose-600'
-    },
-    {
-      id: '11',
-      name: 'الأمراض الجلدية',
-      description: 'تشخيص وعلاج أمراض الجلد والشعر والأظافر',
-      icon: Eye,
-      doctorCount: 30,
-      color: 'bg-indigo-100 text-indigo-600'
-    },
-    {
-      id: '12',
-      name: 'المسالك البولية',
-      description: 'علاج أمراض الجهاز البولي والتناسلي',
-      icon: Stethoscope,
-      doctorCount: 22,
-      color: 'bg-teal-100 text-teal-600'
-    }
-  ];
+  // خريطة الأيقونات
+  const iconMap: Record<string, any> = {
+    'heart': Heart,
+    'baby': Baby,
+    'eye': Eye,
+    'brain': Brain,
+    'bone': Bone,
+    'medical': Stethoscope,
+    'surgery': Scissors,
+    'tooth': Stethoscope,
+    'skin': Stethoscope,
+    'female': Baby
+  };
+
+  // خريطة الألوان
+  const colorMap: Record<string, string> = {
+    'طب القلب': 'bg-red-100 text-red-600',
+    'طب الأطفال': 'bg-pink-100 text-pink-600',
+    'طب العيون': 'bg-blue-100 text-blue-600',
+    'طب الأعصاب': 'bg-purple-100 text-purple-600',
+    'العظام والمفاصل': 'bg-orange-100 text-orange-600',
+    'الطب الباطني': 'bg-green-100 text-green-600',
+    'الجراحة العامة': 'bg-gray-100 text-gray-600',
+    'طب الأسنان': 'bg-cyan-100 text-cyan-600',
+    'الأمراض الجلدية': 'bg-yellow-100 text-yellow-600',
+    'طب النساء والولادة': 'bg-indigo-100 text-indigo-600'
+  };
 
   useEffect(() => {
-    // محاكاة تحميل البيانات
-    const loadSpecialties = async () => {
-      setLoading(true);
-      // محاكاة تأخير الشبكة
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSpecialties(allSpecialties);
-      setLoading(false);
-    };
-
     loadSpecialties();
   }, []);
+
+  const loadSpecialties = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/specialties');
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        const formattedSpecialties = result.data.map((spec: any) => ({
+          id: spec.id,
+          name: spec.name,
+          description: spec.description,
+          icon: iconMap[spec.icon] || Stethoscope,
+          doctorCount: spec.doctorsCount || 0,
+          color: colorMap[spec.name] || 'bg-gray-100 text-gray-600'
+        }));
+        setSpecialties(formattedSpecialties);
+      }
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredSpecialties = specialties.filter(specialty =>
     specialty.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

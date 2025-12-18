@@ -28,7 +28,6 @@ export async function GET(
       }
     });
   } catch (error: any) {
-    console.error('Error fetching specialty:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -70,7 +69,6 @@ export async function PUT(
       message: 'Specialty updated successfully'
     });
   } catch (error: any) {
-    console.error('Error updating specialty:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -112,7 +110,6 @@ export async function DELETE(
       message: 'Specialty deleted successfully'
     });
   } catch (error: any) {
-    console.error('Error deleting specialty:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

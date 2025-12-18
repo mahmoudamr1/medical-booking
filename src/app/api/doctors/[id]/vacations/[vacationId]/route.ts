@@ -14,7 +14,6 @@ export async function PATCH(
     
     return NextResponse.json({ success: true, data: vacation });
   } catch (error: any) {
-    console.error('Error updating vacation:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -34,7 +33,6 @@ export async function DELETE(
     
     return NextResponse.json({ success: true, message: 'Vacation deleted successfully' });
   } catch (error: any) {
-    console.error('Error deleting vacation:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

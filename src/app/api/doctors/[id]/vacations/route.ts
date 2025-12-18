@@ -25,7 +25,6 @@ export async function GET(
     
     return NextResponse.json({ success: true, data: formattedVacations });
   } catch (error: any) {
-    console.error('Error fetching doctor vacations:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -62,7 +61,6 @@ export async function POST(
     
     return NextResponse.json({ success: true, data: formattedVacation });
   } catch (error: any) {
-    console.error('Error creating vacation:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

@@ -40,7 +40,6 @@ export default function DoctorSchedulePage() {
         currentDoctorData = allDoctorsData.data[0];
         setDoctorData(currentDoctorData);
       } else {
-        console.error('No doctors found');
         toast.error('لم يتم العثور على أطباء في النظام');
         return;
       }
@@ -62,7 +61,6 @@ export default function DoctorSchedulePage() {
         setWorkingHours(formattedHours);
       }
     } catch (error) {
-      console.error('Error loading schedule:', error);
       toast.error('حدث خطأ في تحميل الجدول');
     } finally {
       setLoading(false);
@@ -136,7 +134,6 @@ export default function DoctorSchedulePage() {
 
       toast.success('تم حفظ أوقات العمل بنجاح!');
     } catch (error) {
-      console.error('Error saving schedule:', error);
       toast.error('حدث خطأ في حفظ الجدول');
     } finally {
       setIsLoading(false);

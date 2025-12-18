@@ -72,7 +72,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Error during registration:', error);
     return NextResponse.json(
       { success: false, error: 'حدث خطأ في إنشاء الحساب' },
       { status: 500 }

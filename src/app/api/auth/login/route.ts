@@ -82,7 +82,6 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Error during login:', error);
     return NextResponse.json(
       { success: false, error: 'حدث خطأ في تسجيل الدخول' },
       { status: 500 }

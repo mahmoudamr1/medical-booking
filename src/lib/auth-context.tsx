@@ -65,7 +65,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
       } catch (error) {
-        console.error('Auth initialization error:', error);
         // إزالة البيانات التالفة
         if (typeof window !== 'undefined') {
           localStorage.removeItem('auth_user');
@@ -118,7 +117,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       return false;
     } catch (error) {
-      console.error('Login error:', error);
       return false;
     } finally {
       setIsLoading(false);
@@ -150,7 +148,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             logout();
           }
         } catch (error) {
-          console.error('Check auth error:', error);
           logout();
         }
       }

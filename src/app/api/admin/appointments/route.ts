@@ -94,7 +94,6 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error: any) {
-    console.error('Error fetching appointments:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -125,7 +124,6 @@ export async function POST(request: NextRequest) {
       data: appointment
     });
   } catch (error: any) {
-    console.error('Error creating appointment:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

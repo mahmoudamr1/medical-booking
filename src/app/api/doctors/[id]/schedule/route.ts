@@ -26,7 +26,6 @@ export async function GET(
     
     return NextResponse.json({ success: true, data: formattedSchedules });
   } catch (error: any) {
-    console.error('Error fetching doctor schedule:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
@@ -75,7 +74,6 @@ export async function POST(
     
     return NextResponse.json({ success: true, data: createdSchedules });
   } catch (error: any) {
-    console.error('Error updating doctor schedule:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }

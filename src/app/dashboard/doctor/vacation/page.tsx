@@ -43,7 +43,6 @@ export default function DoctorVacationPage() {
       const allDoctorsData = await allDoctorsResult.json();
       
       if (!allDoctorsData.success || !allDoctorsData.data || allDoctorsData.data.length === 0) {
-        console.error('No doctors found');
         toast.error('لم يتم العثور على أطباء في النظام');
         return;
       }
@@ -83,7 +82,6 @@ export default function DoctorVacationPage() {
         setVacations(formattedVacations);
       }
     } catch (error) {
-      console.error('Error loading vacations:', error);
       toast.error('حدث خطأ في تحميل الإجازات');
     } finally {
       setLoading(false);
@@ -148,7 +146,6 @@ export default function DoctorVacationPage() {
       toast.success(editingVacation ? 'تم تحديث الإجازة بنجاح!' : 'تم إضافة الإجازة بنجاح!');
       resetForm();
     } catch (error) {
-      console.error('Error saving vacation:', error);
       toast.error('حدث خطأ في حفظ الإجازة');
     } finally {
       setIsLoading(false);
@@ -189,7 +186,6 @@ export default function DoctorVacationPage() {
       await loadDoctorVacations();
       toast.success('تم حذف الإجازة بنجاح!');
     } catch (error) {
-      console.error('Error deleting vacation:', error);
       toast.error('حدث خطأ في حذف الإجازة');
     }
   };

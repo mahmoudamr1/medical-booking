@@ -62,7 +62,6 @@ export default function DoctorPricingPage() {
         ]);
       }
     } catch (error) {
-      console.error('Error loading doctor data:', error);
       alert('حدث خطأ في تحميل البيانات');
     }
   };
@@ -114,7 +113,6 @@ export default function DoctorPricingPage() {
       
       toast.success('تم تحديث السعر بنجاح!');
     } catch (error) {
-      console.error('Error updating price:', error);
       toast.error('حدث خطأ في تحديث السعر');
     } finally {
       setIsLoading(false);
