@@ -21,22 +21,23 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// بيانات المستخدمين التجريبية
+// بيانات المستخدمين التجريبية - متطابقة مع database.ts
 const testUsers: User[] = [
+  // مدير النظام
+  { id: '1', name: 'مدير النظام', email: 'mahmoudamr700@gmail.com', role: 'admin', is_active: true },
+  
   // أطباء تجريبيون
-  { id: '1', name: 'د. أحمد محمد', email: 'doctor1@clinic.com', role: 'doctor', is_active: true },
-  { id: '2', name: 'د. فاطمة علي', email: 'doctor2@clinic.com', role: 'doctor', is_active: true },
-  { id: '3', name: 'د. محمد السيد', email: 'doctor3@clinic.com', role: 'doctor', is_active: true },
-  { id: '4', name: 'د. سارة أحمد', email: 'doctor4@clinic.com', role: 'doctor', is_active: true },
-  { id: '5', name: 'د. عبدالله محمد', email: 'doctor5@clinic.com', role: 'doctor', is_active: true },
+  { id: '2', name: 'د. أحمد محمد السيد', email: 'doctor1@clinic.com', role: 'doctor', is_active: true },
+  { id: '3', name: 'د. فاطمة علي أحمد', email: 'doctor2@clinic.com', role: 'doctor', is_active: true },
+  { id: '4', name: 'د. محمد عبدالله', email: 'doctor3@clinic.com', role: 'doctor', is_active: true },
+  { id: '5', name: 'د. سارة أحمد', email: 'doctor4@clinic.com', role: 'doctor', is_active: true },
+  { id: '6', name: 'د. عبدالله محمد', email: 'doctor5@clinic.com', role: 'doctor', is_active: true },
+  { id: '11', name: 'د. يوسف إبراهيم', email: 'doctor7@clinic.com', role: 'doctor', is_active: true },
   
   // مرضى تجريبيون
-  { id: '6', name: 'أحمد علي', email: 'patient1@example.com', role: 'patient', is_active: true },
-  { id: '7', name: 'فاطمة محمد', email: 'patient2@example.com', role: 'patient', is_active: true },
-  { id: '8', name: 'محمد أحمد', email: 'patient3@example.com', role: 'patient', is_active: true },
-  
-  // مدير النظام
-  { id: '9', name: 'مدير النظام', email: 'mahmoudamr700@gmail.com', role: 'admin', is_active: true }
+  { id: '7', name: 'أحمد علي', email: 'patient1@example.com', role: 'patient', is_active: true },
+  { id: '8', name: 'فاطمة محمد', email: 'patient2@example.com', role: 'patient', is_active: true },
+  { id: '9', name: 'محمد أحمد', email: 'patient3@example.com', role: 'patient', is_active: true }
 ];
 
 export function AuthProvider({ children }: { children: ReactNode }) {
