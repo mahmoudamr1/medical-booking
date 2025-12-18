@@ -64,13 +64,35 @@ export default function DoctorRegisterPage() {
     setIsLoading(true);
 
     try {
-      // محاكاة إرسال طلب التسجيل
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast.success('تم إرسال طلب التسجيل بنجاح! سيتم مراجعته من قبل الإدارة');
-      router.push('/auth/login');
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+          role: 'doctor',
+          specialty: formData.specialty,
+          location: formData.location,
+          experience: formData.experience,
+          bio: formData.bio,
+          licenseNumber: formData.licenseNumber
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success('تم إنشاء حساب الطبيب بنجاح! يمكنك الآن تسجيل الدخول');
+        router.push('/auth/login');
+      } else {
+        toast.error(result.error || 'خطأ في إنشاء الحساب');
+      }
     } catch (error) {
-      toast.error('خطأ في إرسال الطلب');
+      toast.error('خطأ في الاتصال بالخادم');
     } finally {
       setIsLoading(false);
     }

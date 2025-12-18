@@ -3,7 +3,18 @@ import { db } from '@/lib/database';
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password, phone, role = 'patient' } = await request.json();
+    const { 
+      name, 
+      email, 
+      password, 
+      phone, 
+      role = 'patient',
+      specialty,
+      location,
+      experience,
+      bio,
+      licenseNumber
+    } = await request.json();
 
     // التحقق من البيانات المطلوبة
     if (!name || !email || !password) {
@@ -49,6 +60,29 @@ export async function POST(request: NextRequest) {
       is_active: true
     });
 
+    // إذا كان المستخدم طبيب، إنشاء بيانات الطبيب
+    let doctorData = null;
+    if (role === 'doctor' && specialty) {
+      // البحث عن التخصص والموقع
+      const specialtyObj = db.getSpecialties().find(s => s.name === specialty);
+      const locationObj = db.getLocations().find(l => l.governorate === location || l.area === location);
+      
+      doctorData = db.createDoctor({
+        user_id: newUser.id,
+        specialty_id: specialtyObj?.id || '1',
+        location_id: locationObj?.id || '1',
+        price: 300, // سعر افتراضي
+        consultation_duration: 30,
+        bio: bio || '',
+        experience_years: parseInt(experience) || 0,
+        license_number: licenseNumber || '',
+        is_verified: false, // يحتاج موافقة الإدارة
+        is_active: true,
+        rating: 0,
+        total_reviews: 0
+      });
+    }
+
     // إنشاء token بسيط
     const token = `token_${newUser.id}_${Date.now()}`;
 
@@ -59,7 +93,8 @@ export async function POST(request: NextRequest) {
       role: newUser.role,
       phone: newUser.phone,
       is_active: newUser.is_active,
-      created_at: newUser.created_at
+      created_at: newUser.created_at,
+      ...(doctorData && { doctor: doctorData })
     };
 
     return NextResponse.json({
@@ -68,7 +103,9 @@ export async function POST(request: NextRequest) {
         user: userData,
         token
       },
-      message: 'تم إنشاء الحساب بنجاح'
+      message: role === 'doctor' 
+        ? 'تم إنشاء حساب الطبيب بنجاح! سيتم مراجعة البيانات من قبل الإدارة'
+        : 'تم إنشاء الحساب بنجاح'
     });
 
   } catch (error: any) {

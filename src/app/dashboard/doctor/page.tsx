@@ -157,7 +157,6 @@ export default function DoctorDashboard() {
 
   const updateAppointmentStatus = async (appointmentId: string, newStatus: string) => {
     try {
-      console.log('🔄 Updating appointment status:', appointmentId, 'to', newStatus);
       const response = await fetch(`/api/bookings/${appointmentId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -165,14 +164,10 @@ export default function DoctorDashboard() {
       });
 
       if (response.ok) {
-        console.log('✅ Appointment status updated successfully');
-        // إعادة تحميل البيانات فوراً
         await refetchAppointments();
-      } else {
-        console.error('❌ Failed to update appointment status');
       }
     } catch (error) {
-      console.error('❌ Error updating appointment:', error);
+      // Handle error silently
     }
   };
 
@@ -182,13 +177,6 @@ export default function DoctorDashboard() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">جاري التحميل...</p>
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-4 text-xs text-gray-500">
-              <p>Auth Loading: {isLoading ? 'Yes' : 'No'}</p>
-              <p>Doctor Loading: {doctorLoading ? 'Yes' : 'No'}</p>
-              <p>User: {user ? `${user.email} (${user.role})` : 'None'}</p>
-            </div>
-          )}
         </div>
       </div>
     );
@@ -313,41 +301,7 @@ export default function DoctorDashboard() {
       </header>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* معلومات التشخيص والتحديث */}
-        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-sm">
-          <div className="flex justify-between items-start">
-            <div>
-              <p><strong>✅ النظام يعمل بشكل صحيح:</strong></p>
-              <p>المستخدم: {user ? `${user.name} (User ID: ${user.id})` : 'غير متصل'}</p>
-              <p>الطبيب: {doctorData ? `${doctorData.name} (Doctor ID: ${doctorData.id})` : doctorLoading ? 'جاري التحميل...' : '❌ لم يتم العثور على بيانات الطبيب'}</p>
-              <p>إجمالي الحجوزات: {appointments.length}</p>
-              <p>حجوزات اليوم: {todayAppointments.length}</p>
-              <p>آخر تحديث: {new Date().toLocaleTimeString('ar-SA')}</p>
-              <p className="text-xs text-gray-500 mt-1">
-                {appointmentsLoading ? '🔄 جاري التحديث...' : '✅ البيانات محدثة - تحديث تلقائي كل 5 ثواني'}
-              </p>
-              {process.env.NODE_ENV === 'development' && (
-                <div className="mt-2 text-xs text-gray-600 bg-gray-100 p-2 rounded">
-                  <p>Debug Info:</p>
-                  <p>- Doctor Loading: {doctorLoading ? 'Yes' : 'No'}</p>
-                  <p>- Appointments Loading: {appointmentsLoading ? 'Yes' : 'No'}</p>
-                  <p>- Doctor Data: {doctorData ? 'Available' : 'Not Available'}</p>
-                  <p>- User Role: {user?.role || 'Unknown'}</p>
-                </div>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                onClick={() => refetchAppointments()}
-                disabled={appointmentsLoading}
-                className="bg-green-600 hover:bg-green-700 text-white"
-              >
-                {appointmentsLoading ? 'جاري التحديث...' : 'تحديث فوري'}
-              </Button>
-            </div>
-          </div>
-        </div>
+
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="bg-white rounded-lg shadow-sm">

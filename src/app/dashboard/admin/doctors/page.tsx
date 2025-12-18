@@ -24,10 +24,9 @@ function DoctorAppointments({ doctorId }: { doctorId: string }) {
         const result = await response.json();
         if (result.success) {
           setAppointments(result.data || []);
-          console.log(`📊 Loaded ${result.data?.length || 0} appointments for doctor ${doctorId}`);
         }
       } catch (error) {
-        console.error('Error loading appointments:', error);
+        // Handle error silently
       } finally {
         setLoading(false);
       }

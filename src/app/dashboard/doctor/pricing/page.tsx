@@ -50,16 +50,8 @@ export default function DoctorPricingPage() {
         setCurrentPrice(doctor.price);
         setNewPrice(doctor.price);
         
-        // محاكاة تاريخ الأسعار (في التطبيق الحقيقي سيأتي من قاعدة البيانات)
-        setPriceHistory([
-          {
-            id: '1',
-            oldPrice: doctor.price - 50,
-            newPrice: doctor.price,
-            date: '2024-11-01',
-            reason: 'تحديث الأسعار حسب السوق'
-          }
-        ]);
+        // تحميل تاريخ الأسعار من API (إذا كان متوفر)
+        setPriceHistory([]);
       }
     } catch (error) {
       alert('حدث خطأ في تحميل البيانات');
@@ -87,28 +79,38 @@ export default function DoctorPricingPage() {
     setIsLoading(true);
     
     try {
-      // محاكاة تحديث السعر (في التطبيق الحقيقي سيتم حفظه في قاعدة البيانات)
-      await new Promise(resolve => setTimeout(resolve, 1000)); // محاكاة تأخير الشبكة
+      // تحديث السعر عبر API
+      const response = await fetch(`/api/doctors/${doctorData?.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ price: newPrice }),
+      });
 
-      // إضافة سجل في تاريخ الأسعار
-      const newHistoryRecord = {
-        id: Date.now().toString(),
-        oldPrice: currentPrice,
-        newPrice: newPrice,
-        date: new Date().toISOString().split('T')[0],
-        reason: reason
-      };
+      if (response.ok) {
+        // إضافة سجل في تاريخ الأسعار
+        const newHistoryRecord = {
+          id: Date.now().toString(),
+          oldPrice: currentPrice,
+          newPrice: newPrice,
+          date: new Date().toISOString().split('T')[0],
+          reason: reason
+        };
 
-      setPriceHistory(prev => [newHistoryRecord, ...prev]);
-      setCurrentPrice(newPrice);
-      setReason('');
-      
-      // تحديث بيانات الطبيب محلياً
-      if (doctorData) {
-        setDoctorData({
-          ...doctorData,
-          price: newPrice
-        });
+        setPriceHistory(prev => [newHistoryRecord, ...prev]);
+        setCurrentPrice(newPrice);
+        setReason('');
+        
+        // تحديث بيانات الطبيب محلياً
+        if (doctorData) {
+          setDoctorData({
+            ...doctorData,
+            price: newPrice
+          });
+        }
+      } else {
+        throw new Error('فشل في تحديث السعر');
       }
       
       toast.success('تم تحديث السعر بنجاح!');

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
 interface User {
   id: string;
@@ -21,24 +21,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// بيانات المستخدمين التجريبية - متطابقة مع database.ts
-const testUsers: User[] = [
-  // مدير النظام
-  { id: '1', name: 'مدير النظام', email: 'mahmoudamr700@gmail.com', role: 'admin', is_active: true },
-  
-  // أطباء تجريبيون
-  { id: '2', name: 'د. أحمد محمد السيد', email: 'doctor1@clinic.com', role: 'doctor', is_active: true },
-  { id: '3', name: 'د. فاطمة علي أحمد', email: 'doctor2@clinic.com', role: 'doctor', is_active: true },
-  { id: '4', name: 'د. محمد عبدالله', email: 'doctor3@clinic.com', role: 'doctor', is_active: true },
-  { id: '5', name: 'د. سارة أحمد', email: 'doctor4@clinic.com', role: 'doctor', is_active: true },
-  { id: '6', name: 'د. عبدالله محمد', email: 'doctor5@clinic.com', role: 'doctor', is_active: true },
-  { id: '11', name: 'د. يوسف إبراهيم', email: 'doctor7@clinic.com', role: 'doctor', is_active: true },
-  
-  // مرضى تجريبيون
-  { id: '7', name: 'أحمد علي', email: 'patient1@example.com', role: 'patient', is_active: true },
-  { id: '8', name: 'فاطمة محمد', email: 'patient2@example.com', role: 'patient', is_active: true },
-  { id: '9', name: 'محمد أحمد', email: 'patient3@example.com', role: 'patient', is_active: true }
-];
+
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -54,15 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           if (savedUser && savedToken) {
             const userData = JSON.parse(savedUser);
-            // التحقق من صحة البيانات المحفوظة
-            const validUser = testUsers.find(u => u.id === userData.id && u.email === userData.email);
-            if (validUser) {
-              setUser(validUser);
-            } else {
-              // إزالة البيانات غير الصحيحة
-              localStorage.removeItem('auth_user');
-              localStorage.removeItem('auth_token');
-            }
+            setUser(userData);
           }
         }
       } catch (error) {
@@ -83,34 +58,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       
-      // محاكاة تأخير الشبكة
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // التحقق من بيانات الدخول
-      let validUser: User | null = null;
-      
-      // التحقق من الأطباء (كلمة المرور: 12345678)
-      if (password === '12345678') {
-        validUser = testUsers.find(u => u.email === email && u.role === 'doctor') || null;
-      }
-      
-      // التحقق من المرضى (كلمة المرور: password123)
-      if (!validUser && password === 'password123') {
-        validUser = testUsers.find(u => u.email === email && u.role === 'patient') || null;
-      }
-      
-      // التحقق من المدير (كلمة المرور: 0123456789)
-      if (!validUser && email === 'mahmoudamr700@gmail.com' && password === '0123456789') {
-        validUser = testUsers.find(u => u.email === email && u.role === 'admin') || null;
-      }
-      
-      if (validUser && validUser.is_active) {
-        setUser(validUser);
+      // استدعاء API تسجيل الدخول الحقيقي
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data.user) {
+        const userData: User = {
+          id: result.data.user.id,
+          name: result.data.user.name,
+          email: result.data.user.email,
+          role: result.data.user.role,
+          is_active: result.data.user.is_active
+        };
+
+        setUser(userData);
         
         // حفظ بيانات المصادقة في localStorage
         if (typeof window !== 'undefined') {
-          localStorage.setItem('auth_user', JSON.stringify(validUser));
-          localStorage.setItem('auth_token', `token_${validUser.id}_${Date.now()}`);
+          localStorage.setItem('auth_user', JSON.stringify(userData));
+          localStorage.setItem('auth_token', result.data.token);
         }
         
         return true;
@@ -142,12 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (savedUser && savedToken) {
         try {
           const userData = JSON.parse(savedUser);
-          const validUser = testUsers.find(u => u.id === userData.id && u.email === userData.email);
-          if (validUser) {
-            setUser(validUser);
-          } else {
-            logout();
-          }
+          setUser(userData);
         } catch (error) {
           logout();
         }

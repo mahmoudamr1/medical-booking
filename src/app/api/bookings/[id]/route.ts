@@ -9,8 +9,6 @@ export async function PATCH(
     const { id } = await params;
     const updates = await request.json();
 
-    console.log('🔄 Updating appointment:', id, 'with:', updates);
-
     // التحقق من وجود الحجز
     const appointment = db.getAppointmentById(id);
     if (!appointment) {
@@ -29,8 +27,6 @@ export async function PATCH(
       );
     }
 
-    console.log('✅ Appointment updated successfully:', updatedAppointment);
-
     return NextResponse.json({
       success: true,
       data: updatedAppointment,
@@ -38,7 +34,6 @@ export async function PATCH(
     });
 
   } catch (error: any) {
-    console.error('❌ Error updating appointment:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'حدث خطأ في تحديث الحجز' },
       { status: 500 }
@@ -52,8 +47,6 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-
-    console.log('🗑️ Deleting appointment:', id);
 
     // التحقق من وجود الحجز
     const appointment = db.getAppointmentById(id);
@@ -73,15 +66,12 @@ export async function DELETE(
       );
     }
 
-    console.log('✅ Appointment deleted successfully');
-
     return NextResponse.json({
       success: true,
       message: 'تم حذف الحجز بنجاح'
     });
 
   } catch (error: any) {
-    console.error('❌ Error deleting appointment:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'حدث خطأ في حذف الحجز' },
       { status: 500 }

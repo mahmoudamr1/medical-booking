@@ -62,7 +62,6 @@ export default function AdminAppointmentsPage() {
         );
       }
 
-      console.log(`📊 Loaded ${data.length} appointments for admin`);
       return data;
     },
     enabled: !!isAuthenticated && !!user && user.role === 'admin',
@@ -75,7 +74,6 @@ export default function AdminAppointmentsPage() {
 
   const updateAppointmentStatus = async (appointmentId: string, newStatus: string) => {
     try {
-      console.log('🔄 Admin updating appointment status:', appointmentId, 'to', newStatus);
       const response = await fetch(`/api/bookings/${appointmentId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -83,7 +81,6 @@ export default function AdminAppointmentsPage() {
       });
 
       if (response.ok) {
-        console.log('✅ Appointment status updated successfully');
         await refetch();
         alert(`تم تحديث حالة الحجز إلى: ${
           newStatus === 'confirmed' ? 'مؤكد' :
@@ -94,7 +91,6 @@ export default function AdminAppointmentsPage() {
         alert('حدث خطأ في تحديث حالة الحجز');
       }
     } catch (error) {
-      console.error('❌ Error updating appointment:', error);
       alert('حدث خطأ في تحديث حالة الحجز');
     }
   };

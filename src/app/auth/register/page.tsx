@@ -50,13 +50,30 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      // محاكاة إنشاء الحساب
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast.success('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول');
-      router.push('/auth/login');
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+          role: 'patient'
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول');
+        router.push('/auth/login');
+      } else {
+        toast.error(result.error || 'خطأ في إنشاء الحساب');
+      }
     } catch (error) {
-      toast.error('خطأ في إنشاء الحساب');
+      toast.error('خطأ في الاتصال بالخادم');
     } finally {
       setIsLoading(false);
     }
