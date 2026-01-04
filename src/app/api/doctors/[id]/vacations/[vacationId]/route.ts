@@ -3,10 +3,10 @@ import pb from '@/lib/pocketbase';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string; vacationId: string } }
+  { params }: { params: Promise<{ id: string; vacationId: string }> }
 ) {
   try {
-    const { vacationId } = params;
+    const { vacationId } = await params;
     const vacationData = await request.json();
     
     // تحديث الإجازة
@@ -23,10 +23,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; vacationId: string } }
+  { params }: { params: Promise<{ id: string; vacationId: string }> }
 ) {
   try {
-    const { vacationId } = params;
+    const { vacationId } = await params;
     
     // حذف الإجازة
     await pb.collection('doctor_blocks').delete(vacationId);

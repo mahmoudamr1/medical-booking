@@ -3,10 +3,11 @@ import { db } from '@/lib/database';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const location = db.getLocationById(params.id);
+    const { id } = await params;
+    const location = db.getLocationById(id);
     
     if (!location) {
       return NextResponse.json(
@@ -37,9 +38,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { governorate, area } = body;
 
@@ -50,7 +52,7 @@ export async function PUT(
       );
     }
 
-    const updatedLocation = db.updateLocation(params.id, {
+    const updatedLocation = db.updateLocation(id, {
       governorate,
       area
     });
@@ -77,12 +79,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // التحقق من وجود أطباء مرتبطين بهذا الموقع
     const doctorsWithLocation = db.getDoctors().filter(doctor => 
-      doctor.location_id === params.id
+      doctor.location_id === id
     );
 
     if (doctorsWithLocation.length > 0) {
@@ -95,7 +98,7 @@ export async function DELETE(
       );
     }
 
-    const deleted = db.deleteLocation(params.id);
+    const deleted = db.deleteLocation(id);
 
     if (!deleted) {
       return NextResponse.json(

@@ -3,10 +3,11 @@ import { db } from '@/lib/database';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const specialty = db.getSpecialtyById(params.id);
+    const { id } = await params;
+    const specialty = db.getSpecialtyById(id);
     
     if (!specialty) {
       return NextResponse.json(
@@ -37,9 +38,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { name, description, icon } = body;
 
@@ -50,7 +52,7 @@ export async function PUT(
       );
     }
 
-    const updatedSpecialty = db.updateSpecialty(params.id, {
+    const updatedSpecialty = db.updateSpecialty(id, {
       name,
       description,
       icon
@@ -78,12 +80,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     // التحقق من وجود أطباء مرتبطين بهذا التخصص
     const doctorsWithSpecialty = db.getDoctors().filter(doctor => 
-      doctor.specialty_id === params.id
+      doctor.specialty_id === id
     );
 
     if (doctorsWithSpecialty.length > 0) {
@@ -96,7 +99,7 @@ export async function DELETE(
       );
     }
 
-    const deleted = db.deleteSpecialty(params.id);
+    const deleted = db.deleteSpecialty(id);
 
     if (!deleted) {
       return NextResponse.json(
