@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -38,7 +38,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: (doctor: Docto
             </span>
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-              {doctor.consultation_duration || doctor.consultationDuration || 30} دقيقة
+              {doctor.consultation_duration || 30} دقيقة
             </span>
           </div>
           <div className="text-lg sm:text-xl font-bold text-green-600 mt-2">{doctor.price} ريال</div>
@@ -61,7 +61,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: (doctor: Docto
   );
 }
 
-export default function SearchPage() {
+function SearchPageContent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -533,5 +533,21 @@ export default function SearchPage() {
         </div>
       )}
     </MainLayout>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <MainLayout>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+          <div className="text-center py-16">
+            <p className="text-gray-600">جاري التحميل...</p>
+          </div>
+        </div>
+      </MainLayout>
+    }>
+      <SearchPageContent />
+    </Suspense>
   );
 }

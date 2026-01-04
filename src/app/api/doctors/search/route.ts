@@ -62,6 +62,7 @@ export async function GET(request: NextRequest) {
     const formattedDoctors = paginatedDoctors.map(doctor => ({
       id: doctor?.id,
       name: doctor?.user?.name,
+      doctorName: doctor?.user?.name,
       specialty: doctor?.specialty?.name,
       location: doctor?.location ? `${doctor.location.governorate} - ${doctor.location.area}` : '',
       governorate: doctor?.location?.governorate,
@@ -72,10 +73,16 @@ export async function GET(request: NextRequest) {
       experience: doctor?.experience_years,
       bio: doctor?.bio,
       consultationDuration: doctor?.consultation_duration,
+      consultation_duration: doctor?.consultation_duration,
       isVerified: doctor?.is_verified,
       isActive: doctor?.is_active,
       phone: doctor?.user?.phone,
-      email: doctor?.user?.email
+      email: doctor?.user?.email,
+      expand: {
+        user: doctor?.user,
+        specialty: doctor?.specialty,
+        location: doctor?.location
+      }
     }));
 
     return NextResponse.json({

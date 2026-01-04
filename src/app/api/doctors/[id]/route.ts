@@ -22,6 +22,7 @@ export async function GET(
     const formattedDoctor = {
       id: doctorWithDetails.id,
       name: doctorWithDetails.user?.name,
+      doctorName: doctorWithDetails.user?.name,
       specialty: doctorWithDetails.specialty?.name,
       location: doctorWithDetails.location ? `${doctorWithDetails.location.governorate} - ${doctorWithDetails.location.area}` : '',
       governorate: doctorWithDetails.location?.governorate,
@@ -32,6 +33,7 @@ export async function GET(
       experience: doctorWithDetails.experience_years,
       bio: doctorWithDetails.bio,
       consultationDuration: doctorWithDetails.consultation_duration,
+      consultation_duration: doctorWithDetails.consultation_duration,
       isVerified: doctorWithDetails.is_verified,
       isActive: doctorWithDetails.is_active,
       phone: doctorWithDetails.user?.phone,

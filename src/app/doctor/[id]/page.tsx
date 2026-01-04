@@ -105,7 +105,7 @@ export default function DoctorProfilePage() {
           patientPhone,
           appointmentDate: selectedDate,
           startTime: selectedTime,
-          endTime: getEndTime(selectedTime, doctor?.consultationDuration || 30),
+          endTime: getEndTime(selectedTime, doctor?.consultation_duration || 30),
           price: doctor?.price || 0,
           notes: bookingNotes
         })
@@ -202,7 +202,7 @@ export default function DoctorProfilePage() {
                     
                     <div className="flex-1">
                       <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                        {doctor.name}
+                        {doctor.doctorName || doctor.name || 'طبيب'}
                       </h1>
                       <p className="text-xl text-blue-600 font-medium mb-4">
                         {doctor.specialty}
@@ -215,7 +215,7 @@ export default function DoctorProfilePage() {
                         </div>
                         <div className="flex items-center gap-2 text-gray-600">
                           <Clock className="h-5 w-5" />
-                          <span>{doctor.consultationDuration} دقيقة</span>
+                          <span>{doctor.consultation_duration || 30} دقيقة</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-600">
                           <User className="h-5 w-5" />
@@ -373,7 +373,7 @@ export default function DoctorProfilePage() {
                         <div className="text-sm space-y-1 text-gray-700">
                           <div>التاريخ: {selectedDate}</div>
                           <div>الوقت: {selectedTime}</div>
-                          <div>المدة: {doctor.consultationDuration} دقيقة</div>
+                          <div>المدة: {doctor.consultation_duration || 30} دقيقة</div>
                           <div className="font-bold text-green-600">السعر: {doctor.price} ريال</div>
                         </div>
                       </div>

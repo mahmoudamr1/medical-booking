@@ -35,7 +35,7 @@ function DoctorCard({ doctor, onBook }: { doctor: any; onBook: (doctor: any) => 
         {/* معلومات الطبيب */}
         <div className="space-y-1 w-full flex-1">
           <h3 className="text-base sm:text-lg font-bold text-gray-900">
-            {doctor.name || 'طبيب'}
+            {doctor.doctorName || doctor.name || doctor.expand?.user?.name || 'طبيب'}
           </h3>
           <p className="text-sm sm:text-base text-blue-600 font-medium">
             {doctor.specialty || 'تخصص طبي'}
@@ -49,7 +49,7 @@ function DoctorCard({ doctor, onBook }: { doctor: any; onBook: (doctor: any) => 
             </span>
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-              {doctor.consultationDuration || doctor.consultation_duration} دقيقة
+              {doctor.consultation_duration || 30} دقيقة
             </span>
           </div>
           <div className="flex items-center justify-center gap-1 text-xs sm:text-sm text-gray-600">
@@ -212,7 +212,7 @@ export default function HomePage() {
           patientPhone,
           appointmentDate: selectedDate,
           startTime: selectedTime,
-          endTime: getEndTime(selectedTime, bookingDoctor.consultationDuration || bookingDoctor.consultation_duration || 30),
+          endTime: getEndTime(selectedTime, bookingDoctor.consultation_duration || 30),
           price: bookingDoctor.price,
           notes: bookingNotes
         })
@@ -647,7 +647,7 @@ export default function HomePage() {
                 <div className="bg-blue-50 p-3 sm:p-4 rounded-lg text-xs sm:text-sm text-gray-700 space-y-1">
                   <div>التاريخ: {selectedDate}</div>
                   <div>الوقت: {selectedTime}</div>
-                  <div>المدة: {bookingDoctor.consultationDuration || bookingDoctor.consultation_duration} دقيقة</div>
+                  <div>المدة: {bookingDoctor.consultation_duration || 30} دقيقة</div>
                   <div className="font-bold text-green-600">السعر: {bookingDoctor.price} ريال</div>
                 </div>
               )}
