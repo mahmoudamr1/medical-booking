@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'booked' => 'تم حجز الموعد بنجاح',
+    'requested' => 'تم إرسال طلب الحجز وبانتظار تأكيد الطبيب',
+    'slot_unavailable' => 'الموعد المختار لم يعد متاحاً',
+    'doctor_unavailable' => 'هذا الطبيب لا يستقبل حجوزات حالياً',
+    'service_invalid' => 'الخدمة المختارة لا يقدمها هذا الطبيب',
+    'self_booking' => 'لا يمكنك حجز موعد مع نفسك',
+    'invalid_transition' => 'لا يمكن تغيير حالة الموعد من ":from" إلى ":to"',
+    'cannot_reschedule' => 'يمكن تغيير موعد الحجوزات المؤكدة أو قيد التأكيد فقط',
+    'cancellation_window' => 'يمكن إلغاء الموعد قبل بدايته بـ :hours ساعة على الأقل',
+    'not_started_yet' => 'لم يبدأ هذا الموعد بعد',
+    'already_started' => 'لقد بدأ هذا الموعد بالفعل',
+    'reason_required' => 'يرجى ذكر السبب',
+    'updated' => 'تم تحديث الموعد',
+    'rescheduled' => 'تم تغيير الموعد',
+    'range_too_large' => 'نطاق التاريخ كبير جداً',
+    'status' => [
+        'pending_confirmation' => 'بانتظار التأكيد',
+        'confirmed' => 'مؤكد',
+        'completed' => 'مكتمل',
+        'cancelled_by_patient' => 'ألغاه المريض',
+        'cancelled_by_doctor' => 'ألغاه الطبيب',
+        'cancelled_by_clinic' => 'ألغته العيادة',
+        'cancelled_by_admin' => 'ألغته الإدارة',
+        'rejected' => 'مرفوض',
+        'expired' => 'منتهي الصلاحية',
+        'no_show' => 'لم يحضر',
+    ],
+];

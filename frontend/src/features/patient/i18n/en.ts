@@ -1,0 +1,60 @@
+import type { Widen } from '@/i18n/types';
+import type { patientAr } from './ar';
+
+export const patientEn: Widen<typeof patientAr> = {
+  patient: {
+    title: 'My appointments',
+    subtitle: 'Track your upcoming and past appointments',
+    navAppointments: 'Appointments',
+    navProfile: 'Profile',
+    navNotifications: 'Notifications',
+    profileTitle: 'Profile',
+    accountSection: 'Account',
+    medicalSection: 'Personal details',
+    dateOfBirth: 'Date of birth',
+    gender: 'Gender',
+    male: 'Male',
+    female: 'Female',
+    notSpecified: 'Not specified',
+    governorate: 'Governorate',
+    city: 'City',
+    passwordSection: 'Change password',
+    currentPassword: 'Current password',
+    newPassword: 'New password',
+    passwordUpdated: 'Password updated',
+    consentsSection: 'Consents & privacy',
+    consent: {
+      terms: 'Accepted the terms & conditions',
+      urgent_data_sharing: 'Share my data with the volunteer doctor in urgent requests',
+      marketing: 'Receive offers and marketing messages',
+      medical_data_processing: 'Allow processing of my medical data to provide the service',
+    },
+    consentReadOnly: 'Managed at sign-up or when requesting urgent help',
+    consentUpdated: 'Consent updated',
+    language: 'Account language',
+  },
+  patientPanel: {
+    dashboard: {
+      greeting: 'Hello, {name}',
+      nextTitle: 'Your next appointment',
+      rateTitle: 'How was your visit?',
+      rateBody: 'Rate your visit with {doctor} to help other patients.',
+      urgentTitle: 'Urgent help',
+      urgentBody: 'Need a doctor quickly? Request a volunteer doctor online or in person.',
+      urgentNew: 'Request urgent help',
+      urgentHistory: 'Urgent request history',
+      notificationsTitle: 'Recent notifications',
+      profileLink: 'Profile & privacy',
+    },
+    detail: {
+      booked: 'Booked',
+      cairoTime: 'Cairo time',
+    },
+    profile: {
+      subtitle: 'Manage your account, personal details and privacy.',
+      accountHint: 'Name, phone and account language.',
+      personalHint: 'Helps doctors prepare for your visit.',
+      consentsHint: 'Control how your data is used.',
+    },
+  },
+};

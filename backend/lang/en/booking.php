@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'booked' => 'Appointment booked successfully',
+    'requested' => 'Appointment requested; awaiting doctor confirmation',
+    'slot_unavailable' => 'The selected appointment is no longer available',
+    'doctor_unavailable' => 'This doctor is not accepting bookings right now',
+    'service_invalid' => 'The selected service is not offered by this doctor',
+    'self_booking' => 'You cannot book an appointment with yourself',
+    'invalid_transition' => 'Cannot change the appointment from ":from" to ":to"',
+    'cannot_reschedule' => 'Only pending or confirmed appointments can be rescheduled',
+    'cancellation_window' => 'Appointments can only be cancelled at least :hours hours before they start',
+    'not_started_yet' => 'This appointment has not started yet',
+    'already_started' => 'This appointment has already started',
+    'reason_required' => 'Please provide a reason',
+    'updated' => 'Appointment updated',
+    'rescheduled' => 'Appointment rescheduled',
+    'range_too_large' => 'The date range is too large',
+    'status' => [
+        'pending_confirmation' => 'Pending confirmation',
+        'confirmed' => 'Confirmed',
+        'completed' => 'Completed',
+        'cancelled_by_patient' => 'Cancelled by patient',
+        'cancelled_by_doctor' => 'Cancelled by doctor',
+        'cancelled_by_clinic' => 'Cancelled by clinic',
+        'cancelled_by_admin' => 'Cancelled by administrator',
+        'rejected' => 'Rejected',
+        'expired' => 'Expired',
+        'no_show' => 'No-show',
+    ],
+];

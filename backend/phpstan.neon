@@ -1,0 +1,13 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - database/seeders
+        - routes
+    level: 6
+    # Read cast types from each model's casts() method (Laravel 11+ style).
+    parseModelCastsMethod: true
+    ignoreErrors:
+        - identifier: missingType.iterableValue

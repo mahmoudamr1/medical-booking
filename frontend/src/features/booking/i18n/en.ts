@@ -1,0 +1,38 @@
+import type { Widen } from '@/i18n/types';
+import type { bookingAr } from './ar';
+
+export const bookingEn: Widen<typeof bookingAr> = {
+  booking: {
+    title: 'Book an appointment',
+    step1: 'Choose a service',
+    step2: 'Choose a day',
+    step3: 'Choose a time',
+    noServices: 'No bookable services',
+    noSlotsInRange: 'No available times in the coming days for this service',
+    noSlotsDay: 'No available times on this day',
+    slotsCount: '{count} slots',
+    timezoneNote: 'Times shown in {tz}',
+    continue: 'Continue',
+    loginToBook: 'Sign in to complete your booking',
+    confirmTitle: 'Confirm booking',
+    confirmDescription: 'Review the appointment details before confirming',
+    doctor: 'Doctor',
+    service: 'Service',
+    location: 'Location',
+    date: 'Date',
+    time: 'Time',
+    duration: 'Duration',
+    price: 'Fee',
+    notesLabel: 'Notes for the doctor (optional)',
+    notesPlaceholder: 'Anything you want to share with the doctor',
+    confirmButton: 'Confirm booking',
+    booking: 'Booking…',
+    successConfirmedTitle: 'Your booking is confirmed',
+    successPendingTitle: 'Booking request sent',
+    successPendingBody: 'The doctor will review and confirm your request. You will be notified.',
+    successConfirmedBody: 'Your appointment is confirmed. Details are in your appointments.',
+    reference: 'Reference',
+    viewAppointments: 'My appointments',
+    bookAnother: 'Book another time',
+  },
+};

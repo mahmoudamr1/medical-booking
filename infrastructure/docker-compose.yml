@@ -1,0 +1,80 @@
+# Local development stack (alternative to scripts/dev-services.sh for machines with Docker).
+#   docker compose -f infrastructure/docker-compose.yml up --build
+# Frontend: http://localhost:3000   API: http://localhost:8000/api/v1/health
+name: medical-booking
+
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: medical_booking
+      POSTGRES_USER: medical_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-medical_dev_password}
+      TZ: UTC
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U medical_user -d medical_booking"]
+      interval: 5s
+      retries: 20
+
+  redis:
+    image: redis:8
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 20
+
+  backend:
+    build: ../backend
+    env_file: ../backend/.env
+    environment:
+      DB_HOST: postgres
+      REDIS_HOST: redis
+    command: sh -c "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
+    ports: ["8000:8000"]
+    volumes:
+      - backend_storage:/app/storage
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      retries: 10
+
+  queue:
+    build: ../backend
+    env_file: ../backend/.env
+    environment: { DB_HOST: postgres, REDIS_HOST: redis }
+    command: php artisan queue:work --queue=urgent,default --tries=3 --backoff=10
+    volumes: [backend_storage:/app/storage]
+    depends_on:
+      backend: { condition: service_healthy }
+
+  scheduler:
+    build: ../backend
+    env_file: ../backend/.env
+    environment: { DB_HOST: postgres, REDIS_HOST: redis }
+    command: php artisan schedule:work
+    volumes: [backend_storage:/app/storage]
+    depends_on:
+      backend: { condition: service_healthy }
+
+  frontend:
+    build:
+      context: ../frontend
+      args:
+        API_ORIGIN: http://backend:8000
+    environment:
+      API_ORIGIN: http://backend:8000
+    ports: ["3000:3000"]
+    depends_on:
+      backend: { condition: service_healthy }
+
+volumes:
+  pgdata:
+  backend_storage:
